@@ -1,0 +1,22 @@
+{
+  "name": "content-layout-control",
+  "description": "A layout control framework for WordPress developers.",
+  "version": "0.1.0",
+  "author": {
+    "name": "Theme of the Crop",
+    "url": "http://themeofthecrop.com"
+  },
+  "devDependencies": {
+    "grunt": "~0.4.5",
+    "chalk": "^0.5.1",
+    "file-sync-cmp": "^0.1.1",
+    "grunt-contrib-clean": "~0.6.0",
+    "grunt-contrib-concat": "~0.5.1",
+    "grunt-contrib-copy": "~0.8.2",
+    "grunt-contrib-jshint": "~0.11.3",
+    "grunt-contrib-less": "~1.0.0",
+    "grunt-contrib-nodeunit": "~0.4.1",
+    "grunt-contrib-uglify": "~0.10.0",
+    "grunt-contrib-watch": "~0.6.1"
+  }
+}
