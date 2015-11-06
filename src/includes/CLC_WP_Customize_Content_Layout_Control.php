@@ -20,6 +20,13 @@ if ( !class_exists( 'CLC_WP_Customize_Content_Layout_Control' ) ) {
 		public $type = 'content_layout';
 
 		/**
+		 * Allowed components
+		 *
+		 * @since 0.1
+		 */
+		public $components = array();
+
+		/**
 		 * Label for the Add Item button
 		 *
 		 * @since 0.1
@@ -45,6 +52,18 @@ if ( !class_exists( 'CLC_WP_Customize_Content_Layout_Control' ) ) {
 			</div>
 
 			<?php
+		}
+
+		/**
+		 * Refresh the parameters passed to the JavaScript via JSON.
+		 *
+		 * @see WP_Customize_Media_Control::to_json()
+		 * @since 0.0.1
+		 */
+		public function to_json() {
+			parent::to_json();
+
+			$this->json['components'] = $this->components;
 		}
 	}
 }

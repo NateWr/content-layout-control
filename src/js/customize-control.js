@@ -252,14 +252,11 @@
 			});
 
 			// Generate the collection of allowed components
-			// @NOTE At the moment this just adds all registered components, but
-			//  eventually it'd be nice to specify allowed components in each
-			//  control, to prepare for eventually supporting multiple controls.
-			// @TODO Retrieve allowed components from control settings
 			control.allowed_components = new Backbone.Collection();
-			for( var i in clc_components ) {
-				if ( typeof clc.Models.component_models[i] !== undefined ) {
-					control.allowed_components.add( new clc.Models.component_models[i]( clc_components[i] ) );
+			for( var i in control.params.components ) {
+				var type = control.params.components[i];
+				if ( typeof clc.Models.component_models[type] !== undefined ) {
+					control.allowed_components.add( new clc.Models.component_models[type]( clc_components[type] ) );
 				}
 			}
 
