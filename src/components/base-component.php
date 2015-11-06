@@ -34,7 +34,10 @@ if ( !class_exists( 'CLC_Component' ) ) {
 		/**
 		 * Settings
 		 *
-		 * An array hash of attributes that should be saved to the database
+		 * An array of attributes that should be saved to the database. Array
+		 * values match settings keys, eg:
+		 *
+		 * array( 'image', 'title', 'content' )
 		 *
 		 * @param array
 		 * @since 0.1
@@ -68,16 +71,11 @@ if ( !class_exists( 'CLC_Component' ) ) {
 		/**
 		 * Sanitize settings
 		 *
-		 * The base class operates a strict sanitization, but this should be
-		 * extended in child classes to sanitize appropriately.
-		 *
+		 * @param array val Values to be sanitized
 		 * @return array
 		 * @since 0.1
 		 */
-		public function sanitize() {
-			$this->settings = absint( $this->settings );
-			return $this->settings;
-		}
+		abstract function sanitize( $val );
 
 		/**
 		 * Get attribute hash for passing to Backbone Model

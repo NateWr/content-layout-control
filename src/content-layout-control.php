@@ -175,6 +175,38 @@ if ( !class_exists( 'CLC_Content_Layout_Control' ) ) {
 		}
 
 		/**
+		 * Sanitize component values
+		 *
+		 * @since 0.1
+		 */
+		static function sanitize( $val ) {
+
+			$output = array();
+
+			if ( !is_array( $val ) ) {
+				return $output;
+			}
+
+			$clc = CLC_Content_Layout_Control();
+			if ( empty( $clc->components ) ) {
+				return $output;
+			}
+
+			foreach( $val as $component ) {
+
+				if ( !is_array( $component ) || empty( $component['type'] ) ||
+						!isset( $clc->components[ $component['type'] ] ) ||
+						!is_subclass_of( $clc->components[ $component['type'] ], 'CLC_Component' ) ) {
+					continue;
+				}
+
+				$output[] = $clc->components[ $component['type'] ]->sanitize( $component );
+			}
+
+			return $output;
+		}
+
+		/**
 		 * Enqueue scripts and styles for the control panel
 		 *
 		 * @return null

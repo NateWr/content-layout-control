@@ -48,6 +48,23 @@ if ( !class_exists( 'CLC_Component_Content_Block' ) ) {
 		public $settings = array( 'image', 'title', 'content' );
 
 		/**
+		 * Sanitize settings
+		 *
+		 * @param array val Values to be sanitized
+		 * @return array
+		 * @since 0.1
+		 */
+		public function sanitize( $val ) {
+
+			return array(
+				'image'   => isset( $val['image'] ) ? absint( $val['image'] ) : $this->image,
+				'title'   => isset( $val['title'] ) ? sanitize_text_field( $val['title'] ) : $this->title,
+				'content' => isset( $val['content'] ) ? wp_kses_post( $val['content'] ) : $this->content,
+				'type'    => $this->type, // Don't allow this to be modified
+			);
+		}
+
+		/**
 		 * Enqueue customizer control assets
 		 *
 		 * @since 0.1
