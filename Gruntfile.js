@@ -28,6 +28,7 @@ module.exports = function(grunt) {
 				src: [
 					'!src/js/templates',
 					'src/js/customize-control.js',
+					'src/js/customize-preview.js',
 					'src/js/components/**/*.js'
 				]
 			}
