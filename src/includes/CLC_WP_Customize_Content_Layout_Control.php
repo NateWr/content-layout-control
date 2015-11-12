@@ -155,10 +155,8 @@ if ( !class_exists( 'CLC_WP_Customize_Content_Layout_Control' ) ) {
 		 */
 		public function enqueue_preview_data() {
 
-			// @TODO should use the active_callback to determine if the given
-			//  post is editable.
 			$data = array(
-				'post_id' => is_page() ? get_the_ID() : 0
+				'post_id' => call_user_func( $this->active_callback, $this ) ? get_the_ID() : 0
 			);
 
 			if ( is_page() ) {
