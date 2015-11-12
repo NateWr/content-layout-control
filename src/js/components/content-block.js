@@ -27,7 +27,12 @@
 	* @since 0.1
 	*/
 	clc.Views.component_forms['content-block'] = clc.Views.BaseComponentForm.extend({
-		template: wp.template( 'clc-component-content-block' )
+		template: wp.template( 'clc-component-content-block' ),
+
+		events: {
+			'click .delete': 'remove',
+			'blur [data-clc-setting-link]': 'updateLinkedSetting'
+		}
 	});
 
 } )( jQuery );

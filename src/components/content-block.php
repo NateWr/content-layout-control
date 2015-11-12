@@ -57,6 +57,7 @@ if ( !class_exists( 'CLC_Component_Content_Block' ) ) {
 		public function sanitize( $val ) {
 
 			return array(
+				'id'      => isset( $val['id'] ) ? absint( $val['id'] ) : 0,
 				'image'   => isset( $val['image'] ) ? absint( $val['image'] ) : $this->image,
 				'title'   => isset( $val['title'] ) ? sanitize_text_field( $val['title'] ) : $this->title,
 				'content' => isset( $val['content'] ) ? wp_kses_post( $val['content'] ) : $this->content,

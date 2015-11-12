@@ -25,6 +25,7 @@
 		 */
 		Component: Backbone.Model.extend({
 			defaults: {
+				id:          0,
 				name:        '',
 				description: '',
 				type:        '',
@@ -72,8 +73,8 @@
 			// Generate an array of attributes to pass to the setting
 			generateArray: function() {
 				var output = [];
-				this.each( function(model) {
-					output.push(model.attributes);
+				this.each( function( model ) {
+					output.push( model.attributes );
 				});
 
 				return output;
@@ -353,7 +354,9 @@
 				return;
 			}
 
-			this.added_components.add( new clc.Models.component_models[type]( clc_components[type] ) );
+			var atts = _.clone( clc_components[type] );
+			atts.id = _.uniqueId();
+			this.added_components.add( new clc.Models.component_models[type]( atts ) );
 
 			this.closeComponentList();
 		},
@@ -389,7 +392,7 @@
 
 			this.post_id = data.post_id;
 
-			if ( typeof this.edited_posts[this.post_id] == 'undefined' ) {
+			if ( typeof this.edited_posts[this.post_id] === 'undefined' ) {
 				this.edited_posts[this.post_id] = data.components;
 			}
 
