@@ -149,7 +149,7 @@
 				// Store reference to control
 				_.extend( this, _.pick( options, 'control' ) );
 
-				this.listenTo(this.collection, 'add remove', this.render);
+				this.listenTo(this.collection, 'add remove reset', this.render);
 			},
 
 			render: function() {
@@ -236,6 +236,20 @@
 	 */
 	clc.Control = wp.customize.Control.extend({
 		/**
+		 * Current post_id being controlled
+		 *
+		 * @since 0.1
+		 */
+		post_id: 0,
+
+		/**
+		 * Object hash of post setting values
+		 *
+		 * @since 0.1
+		 */
+		edited_posts: {},
+
+		/**
 		 * Load and render the control settings
 		 *
 		 * @abstract
@@ -260,8 +274,8 @@
 				}
 			}
 
-			// Generate a collection of components added to this control
-			control.added_components = new clc.Collections.Added( wp.customize.get()[control.id], { control: control } );
+			// Generate an (empty) collection of components added to this control
+			control.added_components = new clc.Collections.Added( [], { control: control } );
 			control.added_components_view = new clc.Views.AddedList({
 				el: '#customize-control-' + control.id + ' .clc_content_list',
 				collection: control.added_components,
@@ -270,8 +284,9 @@
 			control.added_components_view.render();
 
 			// Register events
-			_.bindAll( control, 'toggleComponentList', 'addComponent', 'updateSetting' );
+			_.bindAll( control, 'toggleComponentList', 'addComponent', 'updateSetting', 'onPageRefresh' );
 			control.container.on( 'click keydown', '.add-item', control.toggleComponentList );
+			wp.customize.previewer.bind( 'customizer-active.clc', this.onPageRefresh );
 
 			// Listen to the close button in the component list
 			$( '#clc-component-list .clc-header' ).on( 'click keydown', '.clc-close', function( event ) {
@@ -291,8 +306,9 @@
 		 * @since 0.1
 		 */
 		updateSetting: function() {
+			this.edited_posts[this.post_id] = this.added_components.generateArray();
 			this.setting( [] ); // Clear it to ensure the change gets noticed
-			this.setting( this.added_components.generateArray() );
+			this.setting( this.edited_posts );
 		},
 
 		/**
@@ -349,6 +365,37 @@
 		 */
 		removeComponent: function( model ) {
 			this.added_components.remove( model );
+		},
+
+		/**
+		 * Load component set for a new post id
+		 *
+		 * When a post is loaded in the previewer, the control needs to be
+		 * updated with the correct set of components. This loads the added
+		 * components collection and sends the current post's components back to
+		 * the previewer to be updated.
+		 *
+		 * @param data object Data about the current post passed from the previewer
+		 * @since 0.1
+		 */
+		onPageRefresh: function( data ) {
+
+			// The current previewer display is not a post
+			if ( !data.post_id ) {
+				this.post_id = 0;
+				this.added_components.reset( [], { control: this } );
+				return;
+			}
+
+			this.post_id = data.post_id;
+
+			if ( typeof this.edited_posts[this.post_id] == 'undefined' ) {
+				this.edited_posts[this.post_id] = data.components;
+			}
+
+			this.added_components.reset( this.edited_posts[this.post_id], { control: this } );
+
+			wp.customize.previewer.send( 'refresh-layout.clc', this.added_components.generateArray() );
 		}
 	});
 

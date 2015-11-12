@@ -83,34 +83,21 @@ if ( !class_exists( 'CLC_Content_Layout_Control' ) ) {
 		 * @since 0.1
 		 */
 		public function init() {
-
-			// Only load files when needed
 			add_action( 'customize_register', array( $this, '_load'), 9 );
-			add_action( 'customize_controls_print_footer_scripts', array( $this, '_load'), 9 );
-			add_action( 'customize_preview_init', array( $this, '_load'), 9 );
-			add_action( 'customize_controls_enqueue_scripts', array( $this, '_load'), 9 );
-
-			// Enqueue scripts and styles for the control panel
-			add_action( 'customize_controls_enqueue_scripts', array( $this, 'enqueue_control_assets' ) );
-
-			// Print component templates
-			add_action( 'customize_controls_print_footer_scripts', array( $this, 'add_component_templates' ) );
 		}
 
 		/**
 		 * Load the files required to manage the layout control, preview and
 		 * rendering.
 		 *
-		 * @param string $maybe_wp_customize When attachd to the
-		 *  `customize_register` action the `$wp_customize` object will be
-		 *  passed. Otherwise there's nothing.
 		 * @return null
 		 * @since 0.1
 		 */
-		public function _load( $maybe_wp_customize = '' ) {
+		public function _load( $wp_customize ) {
 
 			// Load control
 			include_once( self::$dir . '/includes/CLC_WP_Customize_Content_Layout_Control.php' );
+			$wp_customize->register_control_type( 'CLC_WP_Customize_Content_Layout_Control' );
 
 			// Load components
 			if ( empty( $this->components ) ) {
@@ -131,7 +118,7 @@ if ( !class_exists( 'CLC_Content_Layout_Control' ) ) {
 				 *
 				 * This is a global register of components. You still need
 				 * to define the allowable components when you define the
-				 * control in `customize_register`.
+				 * control alongside other cutomizer controls.
 				 *
 				 * @see `clc_component_paths` for locating custom component
 				 *  files.
@@ -192,79 +179,25 @@ if ( !class_exists( 'CLC_Content_Layout_Control' ) ) {
 				return $output;
 			}
 
-			foreach( $val as $component ) {
+			foreach( $val as $post_id => $components ) {
+				foreach( $components as $component ) {
 
-				if ( !is_array( $component ) || empty( $component['type'] ) ||
-						!isset( $clc->components[ $component['type'] ] ) ||
-						!is_subclass_of( $clc->components[ $component['type'] ], 'CLC_Component' ) ) {
-					continue;
+					if ( !is_array( $component ) || empty( $component['type'] ) ||
+							!isset( $clc->components[ $component['type'] ] ) ||
+							!is_subclass_of( $clc->components[ $component['type'] ], 'CLC_Component' ) ) {
+						continue;
+					}
+
+					// check if post exists
+					if ( !get_post_status( $post_id ) ) {
+						return;
+					}
+
+					$output[ absint( $post_id ) ][] = $clc->components[ $component['type'] ]->sanitize( $component );
 				}
-
-				$output[] = $clc->components[ $component['type'] ]->sanitize( $component );
 			}
 
 			return $output;
-		}
-
-		/**
-		 * Enqueue scripts and styles for the control panel
-		 *
-		 * @return null
-		 * @since 0.1
-		 */
-		public function enqueue_control_assets() {
-
-			// Load core control style
-			wp_enqueue_style( 'clc-customize-control', self::$url . '/css/customize-control.css', '0.1' );
-
-			// Load required control, model and view classes
-			wp_enqueue_script( 'clc-customize-control-js', self::$url  . '/js/customize-control.js', array( 'customize-controls' ), '0.1', true );
-
-			// Pass component defaults for locating component-specific
-			// models/views
-			wp_localize_script(
-				'clc-customize-control-js',
-				'clc_components',
-				$this->get_component_attributes()
-			);
-
-			// Load component-specific models and views
-			foreach( $this->components as $id => $component ) {
-				$component->enqueue_control_assets();
-			}
-		}
-
-		/**
-		 * Print component templates for use in Backbone Views
-		 *
-		 * @return array
-		 * @since 0.1
-		 */
-		public function add_component_templates() {
-
-			// Add template for component selection view
-			?>
-			<script type="text/html" id="tmpl-clc-component-summary"><?php $this->component_summary_template(); ?></script>
-			<?php
-
-			// Print each component's control template
-			foreach( $this->components as $id => $component ) {
-				?>
-				<script type="text/html" id="tmpl-clc-component-<?php esc_attr_e( $id ); ?>"><?php $component->control_template(); ?></script>
-				<?php
-			}
-
-			// Print component list container
-			?>
-			<div id="clc-component-list">
-				<div class="clc-header">
-					<a href="#" class="clc-close">
-						<?php esc_html_e( self::$strings['close'] ); ?>
-					</a>
-				</div>
-				<ul class="clc-list"></ul>
-			</div>
-			<?php
 		}
 
 		/**
