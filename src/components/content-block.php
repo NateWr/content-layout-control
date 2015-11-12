@@ -80,7 +80,6 @@ if ( !class_exists( 'CLC_Component_Content_Block' ) ) {
 		 * @since 0.1
 		 */
 		public function render_layout() {
-			$settings = $this->settings;
 			?>
 
 			<h2><?php esc_html_e( $this->title ); ?></h2>
