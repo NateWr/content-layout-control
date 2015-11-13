@@ -45,6 +45,7 @@ if ( !class_exists( 'CLC_WP_Customize_Content_Layout_Control' ) ) {
 			add_action( 'customize_controls_print_footer_scripts', array( $this, 'add_component_templates' ) );
 			add_action( 'customize_preview_init', array( $this, 'enqueue_preview_assets' ) );
 			add_action( 'customize_update_content_layout', array( $this, 'save_to_post_content' ), 10, 2 );
+			add_action( 'customize_preview_init', array( $this, 'filter_preview_content' ) );
 		}
 
 		/**
@@ -233,6 +234,31 @@ if ( !class_exists( 'CLC_WP_Customize_Content_Layout_Control' ) ) {
 					)
 				);
 			}
+		}
+
+		/**
+		 * Add content filters to the preview to output layout component wrapper
+		 *
+		 * @since 0.1
+		 */
+		public function filter_preview_content() {
+
+			// Filter the_content early so other things can hook in
+			add_filter( 'the_content', array( $this, 'create_layout_container' ), 1 );
+		}
+
+		/**
+		 * Replace saved content with a layout container div for the preview
+		 *
+		 * @since 0.1
+		 */
+		public function create_layout_container( $val ) {
+
+			if ( !is_main_query() || !in_the_loop() ) {
+				return $val;
+			}
+
+			return '<div id="content-layout-control" class="clc-content-layout"></div>';
 		}
 	}
 }
