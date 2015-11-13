@@ -71,7 +71,7 @@ if ( !class_exists( 'CLC_Component_Content_Block' ) ) {
 		 * @since 0.1
 		 */
 		public function enqueue_control_assets() {
-			wp_enqueue_script( 'clc-component-content-block-js', CLC_Content_Layout_Control::$url  . '/js/components/content-block.js', array( 'customize-controls', 'clc-customize-control-js' ), '0.1', true );
+			wp_enqueue_script( 'clc-component-content-block-control-js', CLC_Content_Layout_Control::$url  . '/js/components/content-block-control.js', array( 'customize-controls', 'clc-customize-control-js' ), '0.1', true );
 		}
 
 		/**

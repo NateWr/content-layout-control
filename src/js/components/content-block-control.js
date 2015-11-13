@@ -26,7 +26,7 @@
 	* @augments wp.Backbone.View
 	* @since 0.1
 	*/
-	clc.Views.component_forms['content-block'] = clc.Views.BaseComponentForm.extend({
+	clc.Views.component_views['content-block'] = clc.Views.BaseComponentForm.extend({
 		template: wp.template( 'clc-component-content-block' ),
 
 		events: {

@@ -158,8 +158,8 @@
 
 				this.$el.empty();
 				this.collection.each( function( model ) {
-					if ( typeof clc.Views.component_forms[ model.get('type') ] !== 'undefined' ) {
-						this.$el.append( new clc.Views.component_forms[ model.get('type') ]( { model: model, control: this.control } ).render().el );
+					if ( typeof clc.Views.component_views[ model.get('type') ] !== 'undefined' ) {
+						this.$el.append( new clc.Views.component_views[ model.get('type') ]( { model: model, control: this.control } ).render().el );
 					}
 				}, this );
 			}
@@ -224,7 +224,7 @@
 		 *
 		 * @since 0.1
 		 */
-		component_forms: {}
+		component_views: {}
 	};
 
 
@@ -287,7 +287,7 @@
 			// Register events
 			_.bindAll( control, 'toggleComponentList', 'addComponent', 'updateSetting', 'onPageRefresh' );
 			control.container.on( 'click keydown', '.add-item', control.toggleComponentList );
-			wp.customize.previewer.bind( 'customizer-active.clc', this.onPageRefresh );
+			wp.customize.previewer.bind( 'previewer-reset.clc', this.onPageRefresh );
 
 			// Listen to the close button in the component list
 			$( '#clc-component-list .clc-header' ).on( 'click keydown', '.clc-close', function( event ) {

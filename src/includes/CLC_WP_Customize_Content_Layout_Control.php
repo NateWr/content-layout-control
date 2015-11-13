@@ -34,13 +34,6 @@ if ( !class_exists( 'CLC_WP_Customize_Content_Layout_Control' ) ) {
 		public $i18n = array();
 
 		/**
-		 * User capability required to save settings
-		 *
-		 * @since 0.1
-		 */
-		public $capability = 'edit_posts';
-
-		/**
 		 * Initialize
 		 *
 		 * @since 0.1
@@ -138,8 +131,20 @@ if ( !class_exists( 'CLC_WP_Customize_Content_Layout_Control' ) ) {
 		public function enqueue_preview_assets() {
 
 			// Load required control, model and view classes
-			wp_enqueue_script( 'clc-customize-preview-js', CLC_Content_Layout_Control::$url  . '/js/customize-preview.js', array( 'customize-preview' ), '0.1', true );
-			add_action( 'wp_footer', array( $this, 'enqueue_preview_data' ) ); // loads in wp_footer so we have access to template functions like is_page()
+			wp_enqueue_script( 'clc-customize-preview-js', CLC_Content_Layout_Control::$url  . '/js/customize-preview.js', array( 'wp-backbone', 'customize-preview' ), '0.1', true );
+
+			// Pass settings to the script
+			wp_localize_script(
+				'clc-customize-preview-js',
+				'CLC_WP_API_Settings',
+				array(
+					'root' 	=> home_url( rest_get_url_prefix() ),
+					'nonce'	=> wp_create_nonce( 'wp_rest' ),
+				)
+			);
+
+			// Load preview data in `wp_footer` so we have access to template functions like is_page()
+			add_action( 'wp_footer', array( $this, 'enqueue_preview_data' ) );
 
 			// Load component-specific models and views
 			foreach( CLC_Content_Layout_Control()->components as $id => $component ) {
@@ -212,7 +217,7 @@ if ( !class_exists( 'CLC_WP_Customize_Content_Layout_Control' ) ) {
 				return;
 			}
 
-			if ( !current_user_can( $this->capability ) ) {
+			if ( !current_user_can( CLC_Content_Layout_Control()->capability ) ) {
 				return;
 			}
 
@@ -224,53 +229,10 @@ if ( !class_exists( 'CLC_WP_Customize_Content_Layout_Control' ) ) {
 				wp_update_post(
 					array(
 						'ID'           => $post_id,
-						'post_content' => $this->render_layout( $components ),
+						'post_content' => CLC_Content_Layout_Control()->render_layout( $components ),
 					)
 				);
 			}
-		}
-
-		/**
-		 * Render out the layout when passed an array of component values
-		 *
-		 * $this->_load() must have already been called so it can find the
-		 * registered components
-		 *
-		 * @return string HTML blog to be stored in post_content
-		 * @since 0.1
-		 */
-		public function render_layout( $value ) {
-
-			ob_start();
-			// @TODO use a template and maybe even allow a new template to be
-			//  specified when instantiating this class
-			?>
-
-			<div class="clc-content-layout">
-
-			<?php
-			foreach( $value as $cmp_vals ) {
-
-				if ( !isset( $cmp_vals['type'] ) ) {
-					continue;
-				}
-
-				$type = $cmp_vals['type'];
-				$components = CLC_Content_Layout_Control()->components;
-				if ( !isset( $components[$type] ) || !is_subclass_of( $components[$type], 'CLC_Component' ) ) {
-					continue;
-				}
-
-				$component = new $components[$type]( $cmp_vals );
-				$component->render_layout();
-			}
-			?>
-
-			</div><!-- .clc-content-layout -->
-
-			<?php
-
-			return ob_get_clean();
 		}
 	}
 }

@@ -52,6 +52,12 @@ if ( !class_exists( 'CLC_Content_Layout_Control' ) ) {
 		 */
 		public $components = array();
 
+		/**
+		 * User capability required to save settings
+		 *
+		 * @since 0.1
+		 */
+		public $capability = 'edit_posts';
 
 		/**
 		 * Create or retrieve the single instance of the class
@@ -70,6 +76,10 @@ if ( !class_exists( 'CLC_Content_Layout_Control' ) ) {
 				self::$url = untrailingslashit( $args['url'] );
 				self::$strings = $args['strings'];
 
+				if ( isset( $args['capability'] ) ) {
+					$this->capability = $args['capability'];
+				}
+
 				self::$instance->init();
 			}
 
@@ -83,23 +93,41 @@ if ( !class_exists( 'CLC_Content_Layout_Control' ) ) {
 		 * @since 0.1
 		 */
 		public function init() {
-			add_action( 'customize_register', array( $this, '_load'), 9 );
+			add_action( 'customize_register', array( $this, '_load_customizer'), 9 );
+			add_action( 'rest_api_init', array( $this, 'register_endpoints' ) );
 		}
 
 		/**
-		 * Load the files required to manage the layout control, preview and
-		 * rendering.
+		 * Check if user can interact with this control
+		 *
+		 * @since 0.1
+		 */
+		public function current_user_can() {
+			return current_user_can( $this->capability );
+		}
+
+		/**
+		 * Load the control files used for the customizer control and preview
+		 * panes.
 		 *
 		 * @return null
 		 * @since 0.1
 		 */
-		public function _load( $wp_customize ) {
+		public function _load_customizer( $wp_customize ) {
 
-			// Load control
 			include_once( self::$dir . '/includes/CLC_WP_Customize_Content_Layout_Control.php' );
 			$wp_customize->register_control_type( 'CLC_WP_Customize_Content_Layout_Control' );
 
-			// Load components
+			$this->_load_components();
+		}
+
+		/**
+		 * Load components
+		 *
+		 * @since 0.1
+		 */
+		public function _load_components() {
+
 			if ( empty( $this->components ) ) {
 
 				/**
@@ -207,6 +235,87 @@ if ( !class_exists( 'CLC_Content_Layout_Control' ) ) {
 		 */
 		public function component_summary_template() {
 			include( self::$dir . '/js/templates/component-summary.js' );
+		}
+
+		/**
+		 * Render out the layout when passed an array of component values
+		 *
+		 * Expect components to have been registered with $this->_load_components()
+		 *
+		 * @return string HTML blog to be stored in post_content
+		 * @since 0.1
+		 */
+		public function render_layout( $value ) {
+
+			ob_start();
+			// @TODO use a template and maybe even allow a new template to be
+			//  specified when instantiating this class
+			?>
+
+			<div class="clc-content-layout">
+
+			<?php
+			foreach( $value as $cmp_vals ) {
+
+				if ( !isset( $cmp_vals['type'] ) ) {
+					continue;
+				}
+
+				$type = $cmp_vals['type'];
+				$components = $this->components;
+				if ( !isset( $components[$type] ) || !is_subclass_of( $components[$type], 'CLC_Component' ) ) {
+					continue;
+				}
+
+				$component = new $components[$type]( $cmp_vals );
+				$component->render_layout();
+			}
+			?>
+
+			</div><!-- .clc-content-layout -->
+
+			<?php
+
+			return ob_get_clean();
+		}
+
+		/**
+		 * Register endpoints
+		 *
+		 * @since 0.1
+		 */
+		public function register_endpoints() {
+			register_rest_route(
+				'content-layout-control/v1',
+				'/render-components',
+				array(
+					'methods'   => 'POST',
+					'callback' => array( $this, 'api_get_layout' ),
+					'permission_callback' => array( $this, 'current_user_can' ),
+				)
+			);
+		}
+
+		/**
+		 * Compile and return layout in an API request
+		 *
+		 * @since 0.1
+		 */
+		public function api_get_layout( WP_REST_Request $request ) {
+			$params = $request->get_body_params();
+			$params['html'] = '';
+
+			$this->_load_components();
+
+			if ( !isset( $params['type'] ) || empty( $this->components[$params['type']] ) ) {
+				return ''; // @TODO error message much?
+			}
+
+			$component = new $this->components[$params['type']]( $params );
+
+			ob_start();
+			$component->render_layout();
+			return ob_get_clean();
 		}
 	}
 }
