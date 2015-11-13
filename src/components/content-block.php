@@ -75,6 +75,15 @@ if ( !class_exists( 'CLC_Component_Content_Block' ) ) {
 		}
 
 		/**
+		 * Enqueue customizer preview assets
+		 *
+		 * @since 0.1
+		 */
+		public function enqueue_preview_assets() {
+			wp_enqueue_script( 'clc-component-content-block-preview-js', CLC_Content_Layout_Control::$url  . '/js/components/content-block-preview.js', array( 'clc-customize-preview-js' ), '0.1', true );
+		}
+
+		/**
 		 * Render the layout template and return an HTML blob with the content,
 		 * ready to be appended or saved to `post_content`
 		 *
@@ -83,8 +92,8 @@ if ( !class_exists( 'CLC_Component_Content_Block' ) ) {
 		public function render_layout() {
 			?>
 
-			<h2><?php esc_html_e( $this->title ); ?></h2>
-			<p><?php esc_html_e( $this->content ); ?></p>
+			<h2 class="title"><?php esc_html_e( $this->title ); ?></h2>
+			<p class="content"><?php esc_html_e( $this->content ); ?></p>
 			<?php echo wp_get_attachment_image( $this->image ); ?>
 
 			<?php

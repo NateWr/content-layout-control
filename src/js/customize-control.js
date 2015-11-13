@@ -176,7 +176,8 @@
 
 			events: {
 				'click .delete': 'remove',
-				'keyup [data-clc-setting-link]': 'updateLinkedSetting'
+				'blur [data-clc-setting-link]': 'updateLinkedSetting',
+				'onchange [data-clc-setting-link]': 'updateLinkedSetting'
 			},
 
 			initialize: function( options ) {
@@ -201,7 +202,14 @@
 			 *
 			 * This provides easy value binding modeled after the Customizer,
 			 * but it will only work for basic input fields where the value
-			 * can be retrieved with .val()
+			 * can be retrieved with .val().
+			 *
+			 * The default view sends a component-changed event whenever the
+			 * model changes, which will trigger a call  back to the server to
+			 * re-render the entire component. Don't use this for update-as-you-
+			 * type or other high-frequency changes, unless you disable the
+			 * listener which fires this.componentChanged(), or overwrite
+			 * this.componentChanged() so it doesn't send the default event.
 			 *
 			 * @since 0.1
 			 */

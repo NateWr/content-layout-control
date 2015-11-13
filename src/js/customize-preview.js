@@ -18,6 +18,21 @@
 	 */
 	clc.Models = {
 		/**
+		* Base component model
+		*
+		* @augments Backbone.Model
+		* @since 0.1
+		*/
+		Component: Backbone.Model.extend({
+			defaults: {
+				id:          0,
+				name:        '',
+				description: '',
+				type:        '',
+			}
+		}),
+
+		/**
 		 * Hash of component models
 		 *
 		 * @since 0.1
@@ -145,7 +160,7 @@
 		 * @since 0.1
 		 */
 		init: function( data ) {
-			_.bindAll( this, 'reset', 'refresh', 'destroyViews' );
+			_.bindAll( this, 'reset', 'refresh', 'add', 'destroyViews' );
 			this.reset( data );
 		},
 
@@ -181,8 +196,13 @@
 		 * @since 0.1
 		 */
 		add: function( component ) {
+
+			if ( typeof clc.Views.component_views[component.type] === 'undefined' ) {
+				return;
+			}
+
 			$( '#content-layout-control' ).append( '<div id="content-layout-control-' + component.id + '"></div>' );
-			this.views[component.id] = new clc.Views.BaseComponentLayout( {
+			this.views[component.id] = new clc.Views.component_views[component.type]( {
 				el: '#content-layout-control-' + component.id,
 				model: new Backbone.Model( component )
 			} );

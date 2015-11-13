@@ -3,7 +3,7 @@
 		<input type="text" value="{{ data.model.get( 'title' ) }}" data-clc-setting-link="title">
 	</label>
 	<label><?php echo $this->strings['content']; ?>
-		<input type="text" value="{{ data.model.get( 'content' ) }}" data-clc-setting-link="content">
+		<textarea data-clc-setting-link="content">{{ data.model.get( 'content' ) }}</textarea>
 	</label>
 	<p>
 		<a href="#" class="delete">Delete</a>

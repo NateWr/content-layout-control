@@ -31,7 +31,37 @@
 
 		events: {
 			'click .delete': 'remove',
-			'blur [data-clc-setting-link]': 'updateLinkedSetting'
+			'blur [data-clc-setting-link]': 'updateLinkedSetting',
+			'keyup [data-clc-setting-link]': 'updateTextLive'
+		},
+
+		initialize: function( options ) {
+			// Store reference to control
+			_.extend( this, _.pick( options, 'control' ) );
+
+			this.listenTo(this.model, 'change', this.componentChanged);
+		},
+
+		componentChanged: function( model ) {
+			this.control.updateSetting();
+		},
+
+		/**
+		 * Update text inputs in the browser without triggering a full
+		 * component refresh
+		 *
+		 * @since 0.1
+		 */
+		updateTextLive: function( event ) {
+			var target = $( event.target );
+
+			wp.customize.previewer.send(
+				'component-setting-changed-' + this.model.get( 'id' ) + '.clc',
+				{
+					setting: target.data( 'clc-setting-link' ),
+					val: target.val()
+				}
+			);
 		}
 	});
 
