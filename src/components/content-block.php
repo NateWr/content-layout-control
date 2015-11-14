@@ -92,8 +92,8 @@ if ( !class_exists( 'CLC_Component_Content_Block' ) ) {
 		public function render_layout() {
 			?>
 
-			<h2 class="title"><?php esc_html_e( $this->title ); ?></h2>
-			<p class="content"><?php esc_html_e( $this->content ); ?></p>
+			<h2 class="title"><?php echo $this->title; ?></h2>
+			<p class="content"><?php echo $this->content; ?></p>
 			<?php echo wp_get_attachment_image( $this->image ); ?>
 
 			<?php
