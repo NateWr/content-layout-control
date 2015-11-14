@@ -61,8 +61,8 @@ if ( !class_exists( 'CLC_WP_Customize_Content_Layout_Control' ) ) {
 			<ul class="clc-content-list"></ul>
 
 			<div class="buttons">
-				<a href="#" class="add-item">
-					{{ data.i18n['add_item'] }}
+				<a href="#" class="add-component button-secondary">
+					{{ data.i18n['add_component'] }}
 				</a>
 			</div>
 
@@ -198,7 +198,7 @@ if ( !class_exists( 'CLC_WP_Customize_Content_Layout_Control' ) ) {
 			?>
 			<div id="clc-component-list">
 				<div class="clc-header">
-					<a href="#" class="clc-close">
+					<a href="#" class="clc-close button-secondary">
 						<?php esc_html_e( CLC_Content_Layout_Control::$strings['close'] ); ?>
 					</a>
 				</div>

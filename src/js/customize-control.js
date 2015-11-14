@@ -103,8 +103,6 @@
 		ComponentSummary: wp.Backbone.View.extend({
 			tagName: 'li',
 
-			className: 'component',
-
 			template: wp.template( 'clc-component-summary' ),
 
 			events: {
@@ -118,6 +116,8 @@
 			},
 
 			add: function(e) {
+				e.preventDefault();
+				e.stopPropagation();
 				this.control.addComponent( this.model.get( 'type' ) );
 			}
 		}),
@@ -151,6 +151,9 @@
 		 * @since 0.1
 		 */
 		AddedList: wp.Backbone.View.extend({
+			// List of components in an "open" state
+			open_components: [],
+
 			events: {
 				'update-sort': 'updateSort',
 			},
@@ -168,7 +171,8 @@
 				this.$el.empty();
 				this.collection.each( function( model ) {
 					if ( typeof clc.Views.component_views[ model.get('type') ] !== 'undefined' ) {
-						this.$el.append( new clc.Views.component_views[ model.get('type') ]( { model: model, control: this.control } ).render().el );
+						var is_open = this.open_components.indexOf( model.get( 'id' ) ) > -1;
+						this.$el.append( new clc.Views.component_views[ model.get('type') ]( { model: model, control: this.control, is_open: is_open } ).render().el );
 					}
 				}, this );
 			},
@@ -185,6 +189,16 @@
 				this.collection.sort();
 
 				wp.customize.previewer.send( 'refresh-layout.clc', this.collection.generateArray() );
+			},
+
+			/**
+			 * Reset the open_components list when the collection is replaced
+			 * whole-sale
+			 *
+			 * @since 0.1
+			 */
+			resetComponentStates: function() {
+				this.open_components = [];
 			}
 		}),
 
@@ -202,6 +216,7 @@
 			className: 'clc-component-base',
 
 			events: {
+				'click .clc-toggle-component-form': 'toggleFormVisibilityState',
 				'click .delete': 'remove',
 				'blur [data-clc-setting-link]': 'updateLinkedSetting',
 				'onchange [data-clc-setting-link]': 'updateLinkedSetting',
@@ -210,7 +225,9 @@
 
 			initialize: function( options ) {
 				// Store reference to control
-				_.extend( this, _.pick( options, 'control' ) );
+				_.extend( this, _.pick( options, 'control', 'is_open' ) );
+
+				this.setFormVisibilityClass();
 
 				this.listenTo(this.model, 'change', this.componentChanged);
 			},
@@ -262,6 +279,41 @@
 			 */
 			reordered: function( event, index ) {
 				this.$el.trigger( 'update-sort', [this.model, index] );
+			},
+
+			/**
+			 * Toggle the form visibility open/close
+			 *
+			 * @since 0.1
+			 */
+			toggleFormVisibilityState: function( event ) {
+				this.is_open = this.is_open ? false : true;
+
+				if ( this.is_open ) {
+					if ( this.control.added_components_view.open_components.indexOf( this.model.get( 'id' ) ) < 0 ) {
+						this.control.added_components_view.open_components.push( this.model.get( 'id' ) );
+					}
+				} else {
+					var index = this.control.added_components_view.open_components.indexOf( this.model.get( 'id' ) );
+					if ( index > -1 ) {
+						this.control.added_components_view.open_components.splice( index, 1 );
+					}
+				}
+
+				this.setFormVisibilityClass();
+			},
+
+			/**
+			 * Set a class representing the current visibility state
+			 *
+			 * @since 0.1
+			 */
+			setFormVisibilityClass: function() {
+				if ( this.is_open ) {
+					this.$el.addClass( 'is-open' );
+				} else {
+					this.$el.removeClass( 'is-open' );
+				}
 			}
 
 		}),
@@ -333,7 +385,7 @@
 
 			// Register events
 			_.bindAll( control, 'toggleComponentList', 'addComponent', 'updateSetting', 'onPageRefresh' );
-			control.container.on( 'click keydown', '.add-item', control.toggleComponentList );
+			control.container.on( 'click keydown', '.add-component', control.toggleComponentList );
 			wp.customize.previewer.bind( 'previewer-reset.clc', this.onPageRefresh );
 
 			// Listen to the close button in the component list
@@ -347,7 +399,8 @@
 			// Make the list sortable
 			$( '#customize-control-' + control.id + ' .clc-content-list' ).sortable({
 				placeholder: 'clc-content-list-placeholder',
-				delay: 250,
+				delay: '150',
+				handle: '.header',
 				update: this.sortingComplete
 			});
 		},
@@ -409,9 +462,19 @@
 			}
 
 			var atts = _.clone( clc_components[type] );
-			atts.id = _.uniqueId();
 			atts.order = this.added_components.length;
-			this.added_components.add( new clc.Models.component_models[type]( atts ) );
+
+			// Generate a unique ID for the model in this collection. Since it's
+			// just an arbitrary id, it will sometimes match an existing
+			// component. It should be rare so just re-generate an ID until we
+			// find something unique.
+			var get_unique_id = function( id, collection ) {
+				return collection.get( id ) ? get_unique_id( _.uniqueId(), collection ) : id;
+			};
+
+			atts.id = get_unique_id( _.uniqueId(), this.added_components );
+
+			this.added_components.add( new clc.Models.component_models[type]( atts ).toJSON() );
 
 			this.closeComponentList();
 		},
@@ -437,6 +500,9 @@
 		 * @since 0.1
 		 */
 		onPageRefresh: function( data ) {
+
+			// Clear out component open/closed state
+			this.added_components_view.resetComponentStates();
 
 			// The current previewer display is not a post
 			if ( !data.post_id ) {
