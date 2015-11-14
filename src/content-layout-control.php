@@ -302,7 +302,7 @@ if ( !class_exists( 'CLC_Content_Layout_Control' ) ) {
 		 * @since 0.1
 		 */
 		public function api_get_layout( WP_REST_Request $request ) {
-			$params = $request->get_body_params();
+			$params = stripslashes_deep( $request->get_body_params() );
 			$params['html'] = '';
 
 			$this->_load_components();
