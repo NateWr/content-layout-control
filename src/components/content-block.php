@@ -61,6 +61,7 @@ if ( !class_exists( 'CLC_Component_Content_Block' ) ) {
 				'image'   => isset( $val['image'] ) ? absint( $val['image'] ) : $this->image,
 				'title'   => isset( $val['title'] ) ? sanitize_text_field( $val['title'] ) : $this->title,
 				'content' => isset( $val['content'] ) ? wp_kses_post( $val['content'] ) : $this->content,
+				'order'   => isset( $val['order'] ) ? absint( $val['order'] ) : 0,
 				'type'    => $this->type, // Don't allow this to be modified
 			);
 		}
