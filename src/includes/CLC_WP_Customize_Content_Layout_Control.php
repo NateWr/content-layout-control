@@ -58,7 +58,7 @@ if ( !class_exists( 'CLC_WP_Customize_Content_Layout_Control' ) ) {
 		public function content_template() {
 			?>
 
-			<ul class="clc_content_list"></ul>
+			<ul class="clc-content-list"></ul>
 
 			<div class="buttons">
 				<a href="#" class="add-item">

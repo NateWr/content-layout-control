@@ -29,6 +29,8 @@
 	clc.Views.component_views['content-block'] = clc.Views.BaseComponentForm.extend({
 		template: wp.template( 'clc-component-content-block' ),
 
+		className: 'clc-component-content-block',
+
 		events: {
 			'click .delete': 'remove',
 			'blur [data-clc-setting-link]': 'updateLinkedSetting',

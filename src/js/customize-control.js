@@ -174,6 +174,10 @@
 		BaseComponentForm: wp.Backbone.View.extend({
 			template: null, // base views must define a template: wp.template( id )
 
+			tagName: 'li',
+
+			className: 'clc-component-base',
+
 			events: {
 				'click .delete': 'remove',
 				'blur [data-clc-setting-link]': 'updateLinkedSetting',
@@ -286,7 +290,7 @@
 			// Generate an (empty) collection of components added to this control
 			control.added_components = new clc.Collections.Added( [], { control: control } );
 			control.added_components_view = new clc.Views.AddedList({
-				el: '#customize-control-' + control.id + ' .clc_content_list',
+				el: '#customize-control-' + control.id + ' .clc-content-list',
 				collection: control.added_components,
 				control: control
 			});
