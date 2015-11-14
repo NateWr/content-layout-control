@@ -15,7 +15,8 @@
 			type:        'content-block',
 			image:       0,
 			title:       '',
-			content:     ''
+			content:     '',
+			order:       0
 		}
 	});
 
@@ -34,14 +35,8 @@
 		events: {
 			'click .delete': 'remove',
 			'blur [data-clc-setting-link]': 'updateLinkedSetting',
-			'keyup [data-clc-setting-link]': 'updateTextLive'
-		},
-
-		initialize: function( options ) {
-			// Store reference to control
-			_.extend( this, _.pick( options, 'control' ) );
-
-			this.listenTo(this.model, 'change', this.componentChanged);
+			'keyup [data-clc-setting-link]': 'updateTextLive',
+			'reordered': 'reordered'
 		},
 
 		componentChanged: function( model ) {

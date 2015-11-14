@@ -29,6 +29,7 @@
 				name:        '',
 				description: '',
 				type:        '',
+				order:       0
 			}
 		}),
 
@@ -60,6 +61,10 @@
 				this.listenTo( this, 'add remove', _.bind( this.control.updateSetting, this.control ) );
 				this.listenTo( this, 'add', this.sendAddEvent );
 				this.listenTo( this, 'remove', this.sendRemoveEvent );
+			},
+
+			comparator: function( model ) {
+				return model.get( 'order' );
 			},
 
 			sendAddEvent: function( model ) {
@@ -146,6 +151,10 @@
 		 * @since 0.1
 		 */
 		AddedList: wp.Backbone.View.extend({
+			events: {
+				'update-sort': 'updateSort',
+			},
+
 			initialize: function( options ) {
 				// Store reference to control
 				_.extend( this, _.pick( options, 'control' ) );
@@ -162,6 +171,20 @@
 						this.$el.append( new clc.Views.component_views[ model.get('type') ]( { model: model, control: this.control } ).render().el );
 					}
 				}, this );
+			},
+
+			updateSort: function( event, model, position ) {
+
+				this.collection.remove( model );
+				this.collection.add( model, { at: position } );
+
+				this.collection.each(function( model, index ) {
+					model.set( 'order', index );
+				});
+
+				this.collection.sort();
+
+				wp.customize.previewer.send( 'refresh-layout.clc', this.collection.generateArray() );
 			}
 		}),
 
@@ -181,7 +204,8 @@
 			events: {
 				'click .delete': 'remove',
 				'blur [data-clc-setting-link]': 'updateLinkedSetting',
-				'onchange [data-clc-setting-link]': 'updateLinkedSetting'
+				'onchange [data-clc-setting-link]': 'updateLinkedSetting',
+				'reordered': 'reordered'
 			},
 
 			initialize: function( options ) {
@@ -228,7 +252,18 @@
 				var atts = {};
 				atts[ setting ] = target.val();
 				this.model.set( atts );
+			},
+
+			/**
+			 * Triggers a resort on the collection when this model's order has
+			 * been changed
+			 *
+			 * @since 0.1
+			 */
+			reordered: function( event, index ) {
+				this.$el.trigger( 'update-sort', [this.model, index] );
 			}
+
 		}),
 
 		/**
@@ -308,6 +343,13 @@
 				}
 				control.closeComponentList();
 			});
+
+			// Make the list sortable
+			$( '#customize-control-' + control.id + ' .clc-content-list' ).sortable({
+				placeholder: 'clc-content-list-placeholder',
+				delay: 250,
+				update: this.sortingComplete
+			});
 		},
 
 		/**
@@ -368,6 +410,7 @@
 
 			var atts = _.clone( clc_components[type] );
 			atts.id = _.uniqueId();
+			atts.order = this.added_components.length;
 			this.added_components.add( new clc.Models.component_models[type]( atts ) );
 
 			this.closeComponentList();
@@ -411,6 +454,15 @@
 			this.added_components.reset( this.edited_posts[this.post_id], { control: this } );
 
 			wp.customize.previewer.send( 'refresh-layout.clc', this.added_components.generateArray() );
+		},
+
+		/**
+		 * Reset component order when list has been sorted
+		 *
+		 * @since 0.1
+		 */
+		sortingComplete: function( event, ui ) {
+			ui.item.trigger( 'reordered', ui.item.index() );
 		}
 	});
 
