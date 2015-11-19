@@ -205,7 +205,7 @@ if ( !class_exists( 'CLC_WP_Customize_Content_Layout_Control' ) ) {
 			<div id="clc-component-list">
 				<div class="clc-header">
 					<a href="#" class="clc-close button-secondary">
-						<?php esc_html_e( CLC_Content_Layout_Control::$strings['close'] ); ?>
+						<?php esc_html_e( CLC_Content_Layout_Control::$i18n['close'] ); ?>
 					</a>
 				</div>
 				<ul class="clc-list"></ul>

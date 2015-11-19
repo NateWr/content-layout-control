@@ -42,7 +42,7 @@ if ( !class_exists( 'CLC_Content_Layout_Control' ) ) {
 		 * @param array
 		 * @since 0.1
 		 */
-		static $strings = array();
+		static $i18n = array();
 
 		/**
 		 * Registered components
@@ -74,7 +74,7 @@ if ( !class_exists( 'CLC_Content_Layout_Control' ) ) {
 
 				self::$dir = untrailingslashit( plugin_dir_path( __FILE__ ) );
 				self::$url = untrailingslashit( $args['url'] );
-				self::$strings = $args['strings'];
+				self::$i18n = $args['i18n'];
 
 				if ( isset( $args['capability'] ) ) {
 					$this->capability = $args['capability'];

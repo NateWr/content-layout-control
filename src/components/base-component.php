@@ -53,7 +53,7 @@ if ( !class_exists( 'CLC_Component' ) ) {
 		 * @param array
 		 * @since 0.1
 		 */
-		public $strings = array();
+		public $i18n = array();
 
 		/**
 		 * Initialize
