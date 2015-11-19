@@ -1,0 +1,56 @@
+/**
+ * Common utility mix-ins, functions and animations
+ *
+ * @since 0.1
+ */
+// Transform vendor prefixes
+.transform( @transform ) {
+	-webkit-transform: @transform;
+	-ms-transform: @transform;
+	transform: @transform;
+}
+
+// Animation prefixes
+.animation(@animation) {
+	-webkit-animation: @animation;
+	-moz-animation: @animation;
+	-o-animation: @animation;
+	animation: @animation;
+}
+
+// Loading spinner
+@keyframes clc_spin {
+	0% {
+		.transform(rotateZ(-360deg));
+	}
+	100% {
+		.transform(rotateZ(0deg));
+	}
+}
+
+@-webkit-keyframes clc_spin {
+	0% {
+		.transform(rotateZ(-360deg));
+	}
+	100% {
+		.transform(rotateZ(0deg));
+	}
+}
+
+@-moz-keyframes clc_spin {
+	0% {
+		.transform(rotateZ(-360deg));
+	}
+	100% {
+		.transform(rotateZ(0deg));
+	}
+}
+
+@-o-keyframes clc_spin {
+	0% {
+		.transform(rotateZ(-360deg));
+	}
+	100% {
+		.transform(rotateZ(0deg));
+	}
+}

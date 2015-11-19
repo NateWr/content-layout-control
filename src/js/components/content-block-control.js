@@ -33,7 +33,7 @@
 		className: 'clc-component-content-block',
 
 		events: {
-			'click .clc-toggle-component-form': 'toggleFormVisibilityState',
+			'click .clc-toggle-component-form': 'toggleDisplay',
 			'click .delete': 'remove',
 			'blur [data-clc-setting-link]': 'updateLinkedSetting',
 			'keyup [data-clc-setting-link]': 'updateTextLive',

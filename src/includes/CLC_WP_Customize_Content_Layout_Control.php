@@ -131,16 +131,22 @@ if ( !class_exists( 'CLC_WP_Customize_Content_Layout_Control' ) ) {
 		 */
 		public function enqueue_preview_assets() {
 
+			// Load core preview styles
+			wp_enqueue_style( 'clc-customize-preview', CLC_Content_Layout_Control::$url . '/css/customize-preview.css', '0.1' );
+
 			// Load required control, model and view classes
 			wp_enqueue_script( 'clc-customize-preview-js', CLC_Content_Layout_Control::$url  . '/js/customize-preview.js', array( 'wp-backbone', 'customize-preview' ), '0.1', true );
 
 			// Pass settings to the script
 			wp_localize_script(
 				'clc-customize-preview-js',
-				'CLC_WP_API_Settings',
+				'CLC_Preview_Settings',
 				array(
 					'root' 	=> home_url( rest_get_url_prefix() ),
 					'nonce'	=> wp_create_nonce( 'wp_rest' ),
+					'i18n'  => array(
+						'edit_component' => $this->i18n['edit_component'],
+					),
 				)
 			);
 

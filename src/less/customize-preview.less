@@ -1,0 +1,83 @@
+/**
+ * Styles for the components in the customizer preview. Handles loading and
+ * trigger buttons.
+ *
+ * @since 0.1
+ */
+@import "utils";
+
+@text:             #32373c;
+
+.clc-component-layout {
+	position: relative;
+}
+
+.clc-loading {
+	display: block;
+	position: relative;
+	margin: 20px auto;
+	max-width: 200px;
+	min-height: 200px;
+	background: rgba(0,0,0,0.4);
+	border-radius: 4px;
+
+	&:after {
+		content: '';
+		display: block;
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		width: 40px;
+		height: 40px;
+		margin-top: -20px; // Can't center with transforms because of animation
+		margin-left: -20px;
+		.animation( clc_spin 1s linear infinite );
+		border-radius: 100%;
+		border-top: 4px solid @text;
+		border-bottom: 4px solid transparent;
+		border-left: 4px solid @text;
+		border-right: 4px solid transparent;
+		background: rgba(255,255,255,0.5);
+	}
+}
+
+.clc-edit-component {
+	display: none;
+	position: absolute;
+	bottom: 0;
+	left: 50%;
+	width: 40px;
+	height: 40px;
+	padding: 0;
+	.transform(translateX(-50%));
+	line-height: 40px;
+	border: none;
+	border-radius: 50%;
+	background: @text;
+	text-decoration: none;
+	font-weight: normal;
+	font-style: normal;
+	color: #fff;
+	text-align: center;
+	opacity: 0.54;
+	overflow: hidden;
+
+	&:before {
+		content: "\f333";
+		display: block;
+	    font-family: "dashicons";
+		font-size: 20px;
+	    -webkit-font-smoothing: antialiased;
+	    -moz-osx-font-smoothing: grayscale;
+	}
+}
+
+.clc-component-layout:hover .clc-edit-component {
+	display: block;
+
+	&:hover,
+	&:focus {
+		color: #fff;
+		opacity: 1;
+	}
+}

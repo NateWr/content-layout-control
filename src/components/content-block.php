@@ -91,13 +91,7 @@ if ( !class_exists( 'CLC_Component_Content_Block' ) ) {
 		 * @since 0.1
 		 */
 		public function render_layout() {
-			?>
-
-			<h2 class="title"><?php echo $this->title; ?></h2>
-			<p class="content"><?php echo $this->content; ?></p>
-			<?php echo wp_get_attachment_image( $this->image ); ?>
-
-			<?php
+			include( CLC_Content_Layout_Control::$dir . '/components/templates/content-block.php' );
 		}
 
 		/**

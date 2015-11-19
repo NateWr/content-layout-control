@@ -18,6 +18,7 @@ module.exports = function(grunt) {
 				},
 				files: {
 					'dist/css/customize-control.css': 'src/less/customize-control.less',
+					'dist/css/customize-preview.css': 'src/less/customize-preview.less',
 				}
 			}
 		},

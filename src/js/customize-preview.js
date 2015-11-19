@@ -60,6 +60,10 @@
 		BaseComponentLayout: wp.Backbone.View.extend({
 			template: null, // doesn't use template. injects HTML passed from the server
 
+			events: {
+				'click .clc-edit-component': 'editComponent',
+			},
+
 			/**
 			 * Initialize
 			 *
@@ -84,11 +88,12 @@
 			 * @since 0.1
 			 */
 			fetchHTML: function() {
+				this.$el.addClass( 'clc-loading' );
 				$.ajax({
-					url: CLC_WP_API_Settings.root + '/content-layout-control/v1/render-components',
+					url: CLC_Preview_Settings.root + '/content-layout-control/v1/render-components',
 					type: 'POST',
 					beforeSend: function( xhr ) {
-						xhr.setRequestHeader( 'X-WP-Nonce', CLC_WP_API_Settings.nonce );
+						xhr.setRequestHeader( 'X-WP-Nonce', CLC_Preview_Settings.nonce );
 					},
 					data: this.model.attributes,
 					complete: _.bind( this.handleResponse, this )
@@ -106,6 +111,7 @@
 					html = r.responseJSON;
 				}
 
+				this.$el.removeClass( 'clc-loading' );
 				this.injectHTML( html );
 			},
 
@@ -115,8 +121,22 @@
 			 * @since 0.1
 			 */
 			injectHTML: function( html ) {
+				html += '<a href="#" class="clc-edit-component">' + CLC_Preview_Settings.i18n.edit_component + '</a>';
 				this.$el.html( html );
+			},
+
+			/**
+			 * Open the control and the component attached to this layout
+			 *
+			 * @since 0.1
+			 */
+			editComponent: function( event ) {
+				event.preventDefault();
+				event.stopPropagation();
+
+				wp.customize.preview.send( 'edit-component.clc', this.model.get( 'id' ) );
 			}
+
 		}),
 
 		/**
@@ -201,7 +221,7 @@
 				return;
 			}
 
-			$( '#content-layout-control' ).append( '<div id="content-layout-control-' + component.id + '"></div>' );
+			$( '#content-layout-control' ).append( '<div id="content-layout-control-' + component.id + '" class="clc-component-layout clc-component-' + component.type + '"></div>' );
 			this.views[component.id] = new clc.Views.component_views[component.type]( {
 				el: '#content-layout-control-' + component.id,
 				model: new Backbone.Model( component )

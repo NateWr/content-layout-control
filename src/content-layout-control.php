@@ -242,6 +242,7 @@ if ( !class_exists( 'CLC_Content_Layout_Control' ) ) {
 		 *
 		 * Expect components to have been registered with $this->_load_components()
 		 *
+		 * @TODO this should be in a template
 		 * @return string HTML blog to be stored in post_content
 		 * @since 0.1
 		 */
@@ -268,7 +269,11 @@ if ( !class_exists( 'CLC_Content_Layout_Control' ) ) {
 				}
 
 				$component = new $components[$type]( $cmp_vals );
-				$component->render_layout();
+				?>
+
+				<div class="clc-component-layout clc-component-<?php echo esc_attr( $type ); ?>"><?php $component->render_layout(); ?></div>
+
+				<?php
 			}
 			?>
 

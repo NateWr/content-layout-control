@@ -216,20 +216,21 @@
 			className: 'clc-component-base',
 
 			events: {
-				'click .clc-toggle-component-form': 'toggleFormVisibilityState',
+				'click .clc-toggle-component-form': 'toggleDisplay',
 				'click .delete': 'remove',
 				'blur [data-clc-setting-link]': 'updateLinkedSetting',
 				'onchange [data-clc-setting-link]': 'updateLinkedSetting',
-				'reordered': 'reordered'
+				'reordered': 'reordered',
 			},
 
 			initialize: function( options ) {
 				// Store reference to control
 				_.extend( this, _.pick( options, 'control', 'is_open' ) );
 
-				this.setFormVisibilityClass();
+				this.setDisplayClass();
 
 				this.listenTo(this.model, 'change', this.componentChanged);
+				this.listenTo(this.model, 'focus', this.focus);
 			},
 
 			componentChanged: function( model ) {
@@ -282,40 +283,67 @@
 			},
 
 			/**
-			 * Toggle the form visibility open/close
+			 * Toggle the display status open/close
 			 *
 			 * @since 0.1
 			 */
-			toggleFormVisibilityState: function( event ) {
-				this.is_open = this.is_open ? false : true;
-
+			toggleDisplay: function( event ) {
 				if ( this.is_open ) {
-					if ( this.control.added_components_view.open_components.indexOf( this.model.get( 'id' ) ) < 0 ) {
-						this.control.added_components_view.open_components.push( this.model.get( 'id' ) );
-					}
+					this.contract();
 				} else {
-					var index = this.control.added_components_view.open_components.indexOf( this.model.get( 'id' ) );
-					if ( index > -1 ) {
-						this.control.added_components_view.open_components.splice( index, 1 );
-					}
+					this.expand();
 				}
-
-				this.setFormVisibilityClass();
 			},
 
 			/**
-			 * Set a class representing the current visibility state
+			 * Expand form
 			 *
 			 * @since 0.1
 			 */
-			setFormVisibilityClass: function() {
-				if ( this.is_open ) {
+			expand: function() {
+				this.is_open = true;
+				this.setDisplayClass();
+				if ( this.control.added_components_view.open_components.indexOf( this.model.get( 'id' ) ) < 0 ) {
+					this.control.added_components_view.open_components.push( this.model.get( 'id' ) );
+				}
+			},
+
+			/**
+			 * Contract form
+			 *
+			 * @since 0.1
+			 */
+			contract: function() {
+				this.is_open = false;
+				this.setDisplayClass();
+				var index = this.control.added_components_view.open_components.indexOf( this.model.get( 'id' ) );
+				if ( index > -1 ) {
+					this.control.added_components_view.open_components.splice( index, 1 );
+				}
+			},
+
+			/**
+			 * Set visibility class for the form
+			 *
+			 * @since 0.1
+			 */
+			setDisplayClass: function( state ) {
+				if ( state || this.is_open ) {
 					this.$el.addClass( 'is-open' );
 				} else {
 					this.$el.removeClass( 'is-open' );
 				}
-			}
+			},
 
+			/**
+			 * Open this component and focus on it
+			 *
+			 * @since 0.1
+			 */
+			focus: function() {
+				this.expand();
+				this.$el.find( '.clc-toggle-component-form' ).focus();
+			}
 		}),
 
 		/**
@@ -384,9 +412,10 @@
 			control.added_components_view.render();
 
 			// Register events
-			_.bindAll( control, 'toggleComponentList', 'addComponent', 'updateSetting', 'onPageRefresh' );
+			_.bindAll( control, 'toggleComponentList', 'addComponent', 'updateSetting', 'onPageRefresh', 'focusComponent' );
 			control.container.on( 'click keydown', '.add-component', control.toggleComponentList );
 			wp.customize.previewer.bind( 'previewer-reset.clc', this.onPageRefresh );
+			wp.customize.previewer.bind( 'edit-component.clc', this.focusComponent );
 
 			// Listen to the close button in the component list
 			$( '#clc-component-list .clc-header' ).on( 'click keydown', '.clc-close', function( event ) {
@@ -529,6 +558,16 @@
 		 */
 		sortingComplete: function( event, ui ) {
 			ui.item.trigger( 'reordered', ui.item.index() );
+		},
+
+		/**
+		 * Open and focus on a component
+		 *
+		 * @since 0.1
+		 */
+		focusComponent: function( id ) {
+			this.focus();
+			this.added_components.get( id ).trigger( 'focus' );
 		}
 	});
 
