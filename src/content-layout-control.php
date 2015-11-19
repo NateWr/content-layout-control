@@ -208,6 +208,16 @@ if ( !class_exists( 'CLC_Content_Layout_Control' ) ) {
 			}
 
 			foreach( $val as $post_id => $components ) {
+
+				$post_id = absint( $post_id );
+
+				// check if post exists
+				if ( !get_post_status( $post_id ) ) {
+					continue;
+				}
+
+				$output[$post_id] = array();
+
 				foreach( $components as $component ) {
 
 					if ( !is_array( $component ) || empty( $component['type'] ) ||
@@ -215,13 +225,7 @@ if ( !class_exists( 'CLC_Content_Layout_Control' ) ) {
 							!is_subclass_of( $clc->components[ $component['type'] ], 'CLC_Component' ) ) {
 						continue;
 					}
-
-					// check if post exists
-					if ( !get_post_status( $post_id ) ) {
-						return;
-					}
-
-					$output[ absint( $post_id ) ][] = $clc->components[ $component['type'] ]->sanitize( $component );
+					$output[$post_id][] = $clc->components[ $component['type'] ]->sanitize( $component );
 				}
 			}
 

@@ -220,7 +220,7 @@ if ( !class_exists( 'CLC_WP_Customize_Content_Layout_Control' ) ) {
 		 */
 		public function save_to_post_content( $value, $setting ) {
 
-			if ( empty( $value ) || !is_array( $value ) ) {
+			if ( !is_array( $value ) ) {
 				return;
 			}
 
@@ -233,10 +233,11 @@ if ( !class_exists( 'CLC_WP_Customize_Content_Layout_Control' ) ) {
 				update_post_meta( $post_id, 'content_layout', $components );
 
 				// Render and save as `post_content`
+				$content = empty( $components ) ? '' : CLC_Content_Layout_Control()->render_layout( $components );
 				wp_update_post(
 					array(
 						'ID'           => $post_id,
-						'post_content' => CLC_Content_Layout_Control()->render_layout( $components ),
+						'post_content' => $content,
 					)
 				);
 			}
