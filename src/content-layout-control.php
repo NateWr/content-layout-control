@@ -303,6 +303,11 @@ if ( !class_exists( 'CLC_Content_Layout_Control' ) ) {
 					'permission_callback' => array( $this, 'current_user_can' ),
 				)
 			);
+
+			$this->_load_components();
+			foreach( $this->components as $component ) {
+				$component->register_endpoints();
+			}
 		}
 
 		/**

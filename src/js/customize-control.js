@@ -172,7 +172,9 @@
 				this.collection.each( function( model ) {
 					if ( typeof clc.Views.component_views[ model.get('type') ] !== 'undefined' ) {
 						var is_open = this.open_components.indexOf( model.get( 'id' ) ) > -1;
-						this.$el.append( new clc.Views.component_views[ model.get('type') ]( { model: model, control: this.control, is_open: is_open } ).render().el );
+						var view = new clc.Views.component_views[ model.get('type') ]( { model: model, control: this.control, is_open: is_open } );
+						view.render();
+						this.$el.append( view.el );
 					}
 				}, this );
 			},

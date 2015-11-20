@@ -131,5 +131,12 @@ if ( !class_exists( 'CLC_Component' ) ) {
 		 * @since 0.1
 		 */
 		public function control_template() {}
+
+		/**
+		 * Register any custom endpoints required by this component
+		 *
+		 * @since 0.1
+		 */
+		public function register_endpoints() {}
 	}
 }

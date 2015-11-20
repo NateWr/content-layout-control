@@ -1,0 +1,71 @@
+/**
+ * Content Block component control styles for the WordPress Customizer
+ *
+ * @since 0.1
+ */
+ @import "../vars-control";
+ @import "../utils";
+
+.clc-component-content-block {
+
+    .placeholder {
+        padding: 2em;
+        border-radius: 3px;
+        background: rgba(0,0,0,0.15);
+        color: rgba(0,0,0,0.6);
+        text-align: center;
+    }
+
+    .thumb {
+        max-width: 100%;
+
+        img {
+            display: block;
+            width: auto;
+            height: auto;
+            max-width: 100%;
+        }
+
+        &.loading {
+            position: relative;
+            padding: 2em;
+            min-height: 50px;
+            background: rgba(0,0,0,0.15);
+
+            &:after {
+        		content: '';
+        		display: block;
+        		position: absolute;
+        		top: 50%;
+        		left: 50%;
+        		width: 40px;
+        		height: 40px;
+        		margin-top: -24px; // Can't center with transforms because of animation
+        		margin-left: -20px;
+        		.animation( clc_spin 1s linear infinite );
+        		border-radius: 100%;
+        		border-top: 4px solid @text;
+        		border-bottom: 4px solid transparent;
+        		border-left: 4px solid @text;
+        		border-right: 4px solid transparent;
+        		background: rgba(255,255,255,0.5);
+        	}
+        }
+    }
+
+    .buttons {
+        margin-top: @base;
+    }
+
+    fieldset.checkbox-list {
+        margin-top: @base;
+
+        legend {
+            font-style: italic;
+        }
+
+        label {
+            margin: @base 0;
+        }
+    }
+}

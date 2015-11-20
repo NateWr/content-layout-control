@@ -10,13 +10,14 @@
 	 */
 	clc.Models.component_models['content-block'] = clc.Models.Component.extend({
 		defaults: {
-			id:          0,
-			name:        '',
-			description: '',
-			type:        'content-block',
-			image:       0,
-			title:       '',
-			content:     ''
+			name:           '',
+			description:    '',
+			type:           'content-block',
+			image:          0,
+			image_position: 'left',
+			title:          '',
+			content:        '',
+			order:          0
 		}
 	});
 
@@ -45,7 +46,11 @@
 		 * @since 0.1
 		 */
 		settingChanged: function( data ) {
-			this.$el.find( '.' + data.setting ).html( data.val );
+			if ( data.setting == 'image-position' ) {
+				this.updateImagePosition( data.val );
+			} else {
+				this.$el.find( '.' + data.setting ).html( data.val );
+			}
 		},
 
 		/**
@@ -57,7 +62,17 @@
 			// Clean up events bound to wp.customize.preview when the view is removed
 			wp.customize.preview.unbind( 'component-setting-changed-' + this.model.get( 'id' ) +'.clc', this.settingChanged );
 
-			Backbone.View.prototype.remove.apply(this, arguments);
+			Backbone.View.prototype.remove.apply( this );
+		},
+
+		/**
+		 * Update the image position
+		 *
+		 * @since 0.1
+		 */
+		updateImagePosition: function( position ) {
+			this.$el.find( '.clc-wrapper' ).removeClass( 'image-position-left image-position-right image-position-background' )
+				.addClass( 'image-position-' + position );
 		}
 	});
 

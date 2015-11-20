@@ -108,6 +108,16 @@ if ( !class_exists( 'CLC_WP_Customize_Content_Layout_Control' ) ) {
 			// Load required control, model and view classes
 			wp_enqueue_script( 'clc-customize-control-js', CLC_Content_Layout_Control::$url  . '/js/customize-control.js', array( 'customize-controls' ), '0.1', true );
 
+			// Pass settings to the script
+			wp_localize_script(
+				'clc-customize-control-js',
+				'CLC_Control_Settings',
+				array(
+					'root' 	=> home_url( rest_get_url_prefix() ),
+					'nonce'	=> wp_create_nonce( 'wp_rest' ),
+				)
+			);
+
 			// Pass component defaults for locating component-specific
 			// models/views
 			wp_localize_script(
