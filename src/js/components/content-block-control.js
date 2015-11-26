@@ -73,7 +73,7 @@
 
 		componentChanged: function( model ) {
 			this.control.updateSetting();
-			this.render();
+			this.$el.find( '.header .title' ).text( model.get( 'title' ) );
 		},
 
 		/**
