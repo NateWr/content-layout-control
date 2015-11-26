@@ -35,7 +35,7 @@
 
 		events: {
 			'click .clc-toggle-component-form': 'toggleDisplay',
-			'click .delete': 'remove',
+			'click .delete': 'delete',
 			'blur [data-clc-setting-link]': 'updateLinkedSetting',
 			'keyup [data-clc-setting-link]': 'updateTextLive',
 			'reordered': 'reordered',
@@ -51,6 +51,7 @@
 
 			if ( this.image_thumb_url && this.model.get( 'image' ) ) {
 				this.renderThumb();
+			// Fetch the thumbnail URL from the server if we don't yet have one
 			} else if ( this.model.get( 'image' ) ) {
 				$.ajax({
 					url: CLC_Control_Settings.root + '/content-layout-control/v1/components/content-block/thumb-url/' + parseInt( this.model.get( 'image' ), 10 ),
@@ -71,6 +72,12 @@
 			}
 		},
 
+		/**
+		 * Update the setting and set the title, but don't automatically
+		 * trigger a re-render. The image update is handled manually.
+		 *
+		 * @since 0.1
+		 */
 		componentChanged: function( model ) {
 			this.control.updateSetting();
 			this.$el.find( '.header .title' ).text( model.get( 'title' ) );
@@ -156,7 +163,7 @@
 		 * Retrieve a thumbnail URL when passed an array of available image
 		 * sizes
 		 *
-		 * Selects `medium` if it exists and is large nough. Falls back to
+		 * Selects `medium` if it exists and is large enough. Falls back to
 		 * `full` otherwise.
 		 *
 		 * @since 0.1

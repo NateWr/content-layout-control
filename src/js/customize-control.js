@@ -219,7 +219,7 @@
 
 			events: {
 				'click .clc-toggle-component-form': 'toggleDisplay',
-				'click .delete': 'remove',
+				'click .delete': 'delete',
 				'blur [data-clc-setting-link]': 'updateLinkedSetting',
 				'onchange [data-clc-setting-link]': 'updateLinkedSetting',
 				'reordered': 'reordered',
@@ -229,19 +229,35 @@
 				// Store reference to control
 				_.extend( this, _.pick( options, 'control', 'is_open' ) );
 
+				// Preserves expanded/collapsed state as the user browses around
 				this.setDisplayClass();
 
 				this.listenTo(this.model, 'change', this.componentChanged);
 				this.listenTo(this.model, 'focus', this.focus);
 			},
 
+			/**
+			 * By default this will fire whenever the model is changed. The
+			 * base view will send an event to the preview frame that will
+			 * request a complete refresh of the component. Overwite this
+			 * if you want to perform some content updates without re-fetching
+			 * the component from the server.
+			 *
+			 * @since 0.1
+			 */
 			componentChanged: function( model ) {
 				this.control.updateSetting();
 				wp.customize.previewer.send( 'component-changed.clc', model );
 			},
 
-			remove: function() {
+			/**
+			 * Delete this component from the list of added components
+			 *
+			 * @since 0.1
+			 */
+			delete: function() {
 				this.control.removeComponent( this.model );
+				this.remove();
 			},
 
 			/**
@@ -264,13 +280,14 @@
 			updateLinkedSetting: function( event ) {
 				var target = $( event.target );
 				var setting = target.data( 'clc-setting-link' );
+				var val = target.val();
 
-				if ( this.model.get( setting ) === target.val() ) {
+				if ( this.model.get( setting ) === val ) {
 					return;
 				}
 
 				var atts = {};
-				atts[ setting ] = target.val();
+				atts[ setting ] = val;
 				this.model.set( atts );
 			},
 
@@ -511,7 +528,7 @@
 		},
 
 		/**
-		 * Remove a component from the control
+		 * Remove a component from the collection of added components
 		 *
 		 * @since 0.1
 		 */
