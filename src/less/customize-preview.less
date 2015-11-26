@@ -46,29 +46,41 @@
 	position: absolute;
 	bottom: 0;
 	left: 50%;
-	width: 40px;
-	height: 40px;
-	padding: 0;
+	padding: 0 1em;
 	.transform(translateX(-50%));
 	line-height: 40px;
 	border: none;
-	border-radius: 50%;
+	border-radius: 3px;
 	background: @text;
 	text-decoration: none;
+	font-size: 14px;
 	font-weight: normal;
 	font-style: normal;
+	line-height: 30px;
 	color: #fff;
 	text-align: center;
 	opacity: 0.54;
-	overflow: hidden;
 
 	&:before {
 		content: "\f333";
-		display: block;
+		display: inline-block;
+		margin-right: 0.25em;
 	    font-family: "dashicons";
 		font-size: 20px;
+		line-height: 30px;
+		vertical-align: middle;
 	    -webkit-font-smoothing: antialiased;
 	    -moz-osx-font-smoothing: grayscale;
+	}
+
+	&:after {
+		content: '';
+		position: absolute;
+		bottom: 100%;
+		left: 50%;
+		transform: translateX(-50%);
+		border: 10px solid transparent;
+		border-bottom-color: @text;
 	}
 }
 
