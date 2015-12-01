@@ -9,7 +9,7 @@
 @import "vars-control";
 
 // Selection list
-#clc-component-list {
+#clc-secondary-panel {
 	position: absolute;
 	top: 0;
 	bottom: 0;
@@ -21,7 +21,7 @@
 	z-index: 1;
 }
 
-.clc-list-open {
+.clc-secondary-open {
 
 	#customize-preview {
 		opacity: 0.4;
@@ -31,12 +31,12 @@
 		left: 300px;
 	}
 
-	#clc-component-list {
+	#clc-secondary-panel {
 		left: 0;
 	}
 }
 
-#clc-component-list {
+#clc-secondary-panel {
 
 	.clc-header {
 		padding: @base;
@@ -46,12 +46,20 @@
 		text-align: right;
 	}
 
-	.clc-list {
+	.clc-secondary-content {
 		position: absolute;
 		top: 46px;
 		bottom: 0;
-		overflow-y: scroll;
 		margin: 0;
+		width: 100%;
+		overflow-y: scroll;
+
+		> ul {
+			margin: 0;
+		}
+	}
+
+	.clc-secondary-content {
 
 		.component {
 			display: block;
@@ -159,6 +167,7 @@
 			padding: @base;
 		}
 
+		.setting,
 		label {
 			display: block;
 			margin-bottom: @double;
@@ -240,8 +249,17 @@
 	}
 }
 
-.clc-list-open .add-component:before {
+.clc-secondary-open .add-component:before {
 	-webkit-transform: rotate(45deg);
 	-ms-transform: rotate(45deg);
 	transform: rotate(45deg);
+}
+
+// Button rows within components
+.clc-content-list .buttons {
+	text-align: left;
+
+	button {
+		outline: 0; // Rely on focus styles from core
+	}
 }

@@ -138,9 +138,11 @@
 				wp.Backbone.View.prototype.render.apply( this );
 
 				this.$el.empty();
+				var list = $( '<ul></ul>' );
 				this.collection.each( function( model ) {
-					this.$el.append( new clc.Views.ComponentSummary( { model: model, control: this.control } ).render().el );
+					list.append( new clc.Views.ComponentSummary( { model: model, control: this.control } ).render().el );
 				}, this );
+				this.$el.append( list  );
 			}
 		}),
 
@@ -407,7 +409,7 @@
 
 			// Attach an empty list selection view to the DOM
 			clc.selection_list = new clc.Views.SelectionList({
-				el: '#clc-component-list .clc-list',
+				el: '#clc-secondary-panel .clc-secondary-content',
 				collection: new Backbone.Collection(),
 				control: control
 			});
@@ -431,17 +433,17 @@
 			control.added_components_view.render();
 
 			// Register events
-			_.bindAll( control, 'toggleComponentList', 'addComponent', 'updateSetting', 'onPageRefresh', 'focusComponent' );
-			control.container.on( 'click keydown', '.add-component', control.toggleComponentList );
+			_.bindAll( control, 'toggleSecondaryPanel', 'addComponent', 'updateSetting', 'onPageRefresh', 'focusComponent' );
+			control.container.on( 'click keydown', '.add-component', control.toggleSecondaryPanel );
 			wp.customize.previewer.bind( 'previewer-reset.clc', this.onPageRefresh );
 			wp.customize.previewer.bind( 'edit-component.clc', this.focusComponent );
 
 			// Listen to the close button in the component list
-			$( '#clc-component-list .clc-header' ).on( 'click keydown', '.clc-close', function( event ) {
+			$( '#clc-secondary-panel .clc-header' ).on( 'click keydown', '.clc-close', function( event ) {
 				if ( wp.customize.utils.isKeydownButNotEnterEvent( event ) ) {
 					return;
 				}
-				control.closeComponentList();
+				control.closeSecondaryPanel();
 			});
 
 			// Make the list sortable
@@ -472,7 +474,7 @@
 		 *
 		 * @since 0.1
 		 */
-		toggleComponentList: function( event ) {
+		toggleSecondaryPanel: function( event ) {
 
 			if ( wp.customize.utils.isKeydownButNotEnterEvent( event ) ) {
 				return;
@@ -480,12 +482,12 @@
 
 			event.preventDefault();
 
-			if ( !$( 'body' ).hasClass( 'clc-list-open' ) ){
+			if ( !$( 'body' ).hasClass( 'clc-secondary-open' ) ) {
 				clc.selection_list.collection = this.allowed_components;
 				clc.selection_list.render();
 			}
 
-			$( 'body' ).toggleClass( 'clc-list-open' );
+			$( 'body' ).toggleClass( 'clc-secondary-open' );
 		},
 
 		/**
@@ -493,8 +495,8 @@
 		 *
 		 * @since 0.1
 		 */
-		closeComponentList: function() {
-			$( 'body' ).removeClass( 'clc-list-open' );
+		closeSecondaryPanel: function() {
+			$( 'body' ).removeClass( 'clc-secondary-open' );
 		},
 
 		/**
@@ -524,7 +526,7 @@
 
 			this.added_components.add( new clc.Models.component_models[type]( atts ).toJSON() );
 
-			this.closeComponentList();
+			this.closeSecondaryPanel();
 		},
 
 		/**

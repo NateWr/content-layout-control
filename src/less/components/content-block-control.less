@@ -6,66 +6,242 @@
  @import "../vars-control";
  @import "../utils";
 
+// Control
 .clc-component-content-block {
 
-    .placeholder {
-        padding: 2em;
-        border-radius: 3px;
-        background: rgba(0,0,0,0.15);
-        color: rgba(0,0,0,0.6);
-        text-align: center;
-    }
+	.content-block-links {
 
-    .thumb {
-        max-width: 100%;
+		> li {
+			position: relative;
+			margin-bottom: @base;
+		}
 
-        img {
-            display: block;
-            width: auto;
-            height: auto;
-            max-width: 100%;
-        }
+		.link {
+			display: block;
+			padding: @half (@double * 2) @half @base;
+			background: @shade;
+			box-shadow: 0 0 2px rgba(0,0,0,0.2);
+			white-space: nowrap;
+			overflow-x: hidden;
+			text-overflow: ellipsis;
 
-        &.loading {
-            position: relative;
-            padding: 2em;
-            min-height: 50px;
-            background: rgba(0,0,0,0.15);
+			&:hover,
+			&:focus {
+				box-shadow: 0 0 2px rgba(0,0,0,0.6);
 
-            &:after {
-        		content: '';
-        		display: block;
-        		position: absolute;
-        		top: 50%;
-        		left: 50%;
-        		width: 40px;
-        		height: 40px;
-        		margin-top: -24px; // Can't center with transforms because of animation
-        		margin-left: -20px;
-        		.animation( clc_spin 1s linear infinite );
-        		border-radius: 100%;
-        		border-top: 4px solid @text;
-        		border-bottom: 4px solid transparent;
-        		border-left: 4px solid @text;
-        		border-right: 4px solid transparent;
-        		background: rgba(255,255,255,0.5);
-        	}
-        }
-    }
+				&:after {
+					content: '\f504';
+					display: inline-block;
+					padding-left: 0.5em;
+					font-family: 'dashicons';
+					speak: none;
+					line-height: 1;
+					vertical-align: middle;
+					color: #777;
+				}
+			}
+		}
 
-    .buttons {
-        margin-top: @base;
-    }
+		.remove-link {
+			position: absolute;
+			top: 0;
+			right: 0;
+			width: @double + @base;
+			height: @double + @base;
+			border-left: @border;
+			line-height: @double;
+			text-align: center;
+			color: red;
+			opacity: 0.5;
+			overflow: hidden;
 
-    fieldset.checkbox-list {
-        margin-top: @base;
+			&:before {
+				content: '\f335';
+				display: block;
+				width: @double + @base;
+				height: @double + @base;
+				font: normal 20px/1 'dashicons';
+				line-height: @double + @base;
+				speak: none;
+				position: relative;
+				vertical-align: middle;
+				-webkit-font-smoothing: antialiased;
+				-moz-osx-font-smoothing: grayscale;
+			}
 
-        legend {
-            font-style: italic;
-        }
+			&:hover,
+			&:focus {
+				opacity: 1;
+				border-left-color: red;
+			}
+		}
+	}
 
-        label {
-            margin: @base 0;
-        }
-    }
+	.buttons {
+		margin-top: @base;
+
+		.add-link {
+
+			&:before {
+				content: '\f103';
+				display: inline-block;
+				font: normal 20px/1 'dashicons';
+				speak: none;
+				position: relative;
+				vertical-align: middle;
+				-webkit-font-smoothing: antialiased;
+				-moz-osx-font-smoothing: grayscale;
+				transition: transform 0.2s;
+			}
+		}
+	}
+
+	.placeholder {
+		padding: 2em;
+		border-radius: 3px;
+		background: rgba(0,0,0,0.15);
+		color: rgba(0,0,0,0.6);
+		text-align: center;
+	}
+
+	.thumb {
+		max-width: 100%;
+
+		img {
+			display: block;
+			width: auto;
+			height: auto;
+			max-width: 100%;
+		}
+
+		&.loading {
+			position: relative;
+			padding: 2em;
+			min-height: 50px;
+			background: rgba(0,0,0,0.15);
+
+			&:after {
+				content: '';
+				display: block;
+				position: absolute;
+				top: 50%;
+				left: 50%;
+				width: 40px;
+				height: 40px;
+				margin-top: -24px; // Can't center with transforms because of animation
+				margin-left: -20px;
+				.animation( clc_spin 1s linear infinite );
+				border-radius: 100%;
+				border-top: 4px solid @text;
+				border-bottom: 4px solid transparent;
+				border-left: 4px solid @text;
+				border-right: 4px solid transparent;
+				background: rgba(255,255,255,0.5);
+			}
+		}
+	}
+
+	fieldset.checkbox-list {
+		margin-top: @base;
+
+		legend {
+			font-style: italic;
+		}
+
+		label {
+			margin: @base 0;
+		}
+	}
+}
+
+.clc-component-content-block.clc-control-links-open .add-link:before {
+	content: '\f132';
+	-webkit-transform: rotate(45deg);
+	-ms-transform: rotate(45deg);
+	transform: rotate(45deg);
+}
+
+// Links panel
+.clc-link-form {
+	padding: @base;
+	border-bottom: @border;
+
+	.customize-control-title {
+		margin-bottom: 0;
+	}
+
+	label {
+		display: block;
+		margin-bottom: @base;
+	}
+
+	input {
+		width: 100%;
+	}
+}
+
+.clc-link-search {
+	position: relative;
+	padding: @base;
+	background: @shade;
+
+	.label {
+		display: block;
+		line-height: @double;
+		font-style: italic;
+		color: #777;
+	}
+
+	input {
+		width: 80%;
+	}
+
+	.clc-spinner {
+		display: block;
+		position: absolute;
+		bottom: 1em;
+		right: 1em;
+		width: 16px;
+		height: 16px;
+		.halfcircle( 2px, @text );
+		.animation( clc_spin 1s linear infinite );
+		visibility: hidden;
+		opacity: 0.5;
+	}
+}
+
+.fetching .clc-spinner {
+	visibility: visible;
+}
+
+.clc-link-selection-list {
+	margin: 0;
+	border-top: @border;
+
+	li {
+		margin: 0;
+	}
+
+	a {
+		display: block;
+		padding: @base;
+		border-bottom: @border;
+		text-decoration: none;
+		color: @text;
+
+		&:hover,
+		&:focus {
+			background: @shade;
+		}
+	}
+
+	h4 {
+		overflow-x: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+
+	.post-type {
+		color: #777;
+	}
 }

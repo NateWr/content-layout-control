@@ -6,6 +6,36 @@
 	<a href="#" class="clc-toggle-component-form"><?php esc_html_e( CLC_Content_Layout_Control::$i18n['control-toggle'] ); ?></a>
 </div>
 <div class="control">
+	<label>
+		<span class="customize-control-title"><?php echo $this->i18n['title']; ?></span>
+		<input type="text" value="{{ data.model.get( 'title' ) }}" data-clc-setting-link="title">
+	</label>
+	<label>
+		<span class="customize-control-title"><?php echo $this->i18n['content']; ?></span>
+		<textarea data-clc-setting-link="content">{{ data.model.get( 'content' ) }}</textarea>
+	</label>
+	<div class="setting">
+		<span class="customize-control-title"><?php echo $this->i18n['links']; ?></span>
+		<# if ( data.model.get( 'links' ).length ) { #>
+			<ul class="content-block-links">
+				<# for ( var i in data.model.get( 'links' ) ) { #>
+					<li>
+						<a href="{{ data.model.get( 'links' )[i].url }}" class="link" target="_blank">
+							{{ data.model.get( 'links' )[i].link_text }}
+						</a>
+						<a href="#" class="remove-link" data-index="{{ i }}">
+							<?php echo $this->i18n['links_remove_button']; ?>
+						</a>
+					</li>
+				<# } #>
+			</ul>
+		<# } #>
+		<div class="buttons">
+			<button class="add-link button-secondary">
+				<?php echo $this->i18n['links_add_button']; ?>
+			</button>
+		</div>
+	</div>
 	<div class="setting">
 		<span class="customize-control-title"><?php echo $this->i18n['image']; ?></span>
 		<# if ( !data.model.get( 'image' ) ) { #>
@@ -47,14 +77,6 @@
 			<# } #>
 		</div>
 	</div>
-	<label>
-		<span class="customize-control-title"><?php echo $this->i18n['title']; ?></span>
-		<input type="text" value="{{ data.model.get( 'title' ) }}" data-clc-setting-link="title">
-	</label>
-	<label>
-		<span class="customize-control-title"><?php echo $this->i18n['content']; ?></span>
-		<textarea data-clc-setting-link="content">{{ data.model.get( 'content' ) }}</textarea>
-	</label>
 </div>
 <div class="footer">
 	<a href="#" class="delete">Delete</a>

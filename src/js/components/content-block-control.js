@@ -17,6 +17,7 @@
 			image_position: 'left',
 			title:          '',
 			content:        '',
+			links:          [],
 			order:          0
 		}
 	});
@@ -40,10 +41,22 @@
 			'keyup [data-clc-setting-link]': 'updateTextLive',
 			'reordered': 'reordered',
 			'click .select-image': 'openMedia',
-			'keydown .select-image': 'openMedia',
 			'click input[name^="image_position"]': 'updateImagePosition',
 			'click .remove-image': 'removeImage',
-			'keydown .remove-image': 'removeImage',
+			'click .add-link': 'toggleLinkPanel',
+			'click .remove-link': 'removeLink',
+		},
+
+		initialize: function( options ) {
+			// Store reference to control
+			_.extend( this, _.pick( options, 'control', 'is_open' ) );
+
+			// Preserves expanded/collapsed state as the user browses around
+			this.setDisplayClass();
+
+			this.listenTo(this.model, 'change', this.componentChanged);
+			this.listenTo(this.model, 'focus', this.focus);
+			this.listenTo(this, 'content-block-add-link.clc', this.addLink );
 		},
 
 		render: function() {
@@ -107,10 +120,6 @@
 		 * @since 0.1
 		 */
 		openMedia: function( event ) {
-			if ( wp.customize.utils.isKeydownButNotEnterEvent( event ) ) {
-				return;
-			}
-
 			event.preventDefault();
 
 			if ( !this.media ) {
@@ -222,10 +231,6 @@
 		 * @since 0.1
 		 */
 		removeImage: function( event ) {
-			if ( wp.customize.utils.isKeydownButNotEnterEvent( event ) ) {
-				return;
-			}
-
 			event.preventDefault();
 
 			this.model.set({
@@ -234,8 +239,292 @@
 			});
 			this.render();
 			wp.customize.previewer.send( 'component-changed.clc', this.model );
+		},
+
+		/**
+		 * Open or close the link panel
+		 *
+		 * @since 0.1
+		 */
+		toggleLinkPanel: function( event ) {
+			event.preventDefault();
+
+			if ( !$( 'body' ).hasClass( 'clc-secondary-open' ) ) {
+				this.openLinkPanel();
+			} else {
+				this.closeLinkPanel();
+			}
+
+		},
+
+		/**
+		 * Open the link panel
+		 *
+		 * @since 0.1
+		 */
+		openLinkPanel: function() {
+			this.link_panel = new clc.Views.LinkPanel({
+				collection: new Backbone.Collection(),
+				component: this
+			});
+			this.link_panel.render();
+			// Append directly so that we can call .remove() on the view
+			// without losing the .clc-secondary-content div element
+			this.link_panel.$el.appendTo( '#clc-secondary-panel .clc-secondary-content' );
+			$( 'body' ).addClass( 'clc-secondary-open' );
+			this.$el.addClass( 'clc-control-links-open' );
+		},
+
+		/**
+		 * Close the link panel
+		 *
+		 * @since 0.1
+		 */
+		closeLinkPanel: function() {
+			$( 'body' ).removeClass( 'clc-secondary-open' );
+			this.$el.removeClass( 'clc-control-links-open' );
+			this.link_panel.remove();
+		},
+
+		/**
+		 * Add a link
+		 *
+		 * @since 0.1
+		 */
+		addLink: function( link ) {
+			this.model.get( 'links' ).push( link );
+			this.closeLinkPanel();
+			this.control.updateSetting();
+			wp.customize.previewer.send( 'component-changed.clc', this.model );
+			this.render();
+		},
+
+		/**
+		 * Remove a link
+		 *
+		 * @since 0.1
+		 */
+		removeLink: function( event ) {
+			this.model.get( 'links' ).splice( $( event.target ).data( 'index' ), 1 );
+			this.control.updateSetting();
+			wp.customize.previewer.send( 'component-changed.clc', this.model );
+			this.render();
 		}
 
+	});
+
+	/**
+	* Panel for selecting and configuring links
+	*
+	* @augments wp.Backbone.View
+	* @since 0.1
+	*/
+	clc.Views.LinkPanel = wp.Backbone.View.extend({
+		template: wp.template( 'clc-component-content-block-link-selection' ),
+
+		events: {
+			'keyup .clc-content-block-link-search': 'keyupSearch',
+			'keyup .clc-content-block-url': 'setButtonState',
+			'keyup .clc-content-block-link-text': 'setButtonState',
+			'click .add-link': 'add',
+		},
+
+		initialize: function( options ) {
+			// Store reference to component
+			_.extend( this, _.pick( options, 'component' ) );
+			this.state = 'waiting';
+			this.listenTo( this, 'content-block-select-link.clc', this.updateLink );
+		},
+
+		render: function() {
+			this.$el.empty();
+
+			wp.Backbone.View.prototype.render.apply( this );
+
+			this.updateState();
+
+			this.renderCollection();
+
+			this.url = this.$el.find( '.clc-content-block-url' );
+			this.link_text = this.$el.find( '.clc-content-block-link-text' );
+			this.add_link = this.$el.find( '.add-link' );
+			this.search_field = this.$el.find( '.clc-content-block-link-search' );
+
+			this.setButtonState();
+		},
+
+		/**
+		 * Render collection of links
+		 *
+		 * @since 0.1
+		 */
+		renderCollection: function() {
+			var list = this.$el.find( '.clc-link-selection-list' );
+			list.empty();
+			this.collection.each( function( model ) {
+				list.append( new clc.Views.LinkSummary( { model: model, link_panel: this } ).render().el );
+			}, this );
+		},
+
+		/**
+		 * Respond to typiing in the search field
+		 *
+		 * @since 0.1
+		 */
+		keyupSearch: function( event ) {
+			event.preventDefault();
+
+			var search = this.search_field.val();
+			if ( search.length < 3 ) {
+				this.resetSearch();
+				return;
+			}
+
+			if ( this.search == search ) {
+				return;
+			}
+
+			this.fetchLinks( search );
+		},
+
+		/**
+		 * Reset the currently searched string
+		 *
+		 * @since 0.1
+		 */
+		resetSearch: function() {
+			this.search = '';
+			this.updateState( 'waiting' );
+		},
+
+		/**
+		 * Fetch a list of links
+		 *
+		 * @since 0.1
+		 */
+		fetchLinks: function( search ) {
+			this.search = search;
+			this.updateState( 'fetching' );
+
+			$.ajax({
+				url: CLC_Control_Settings.root + '/content-layout-control/v1/components/content-block/links/' + this.search,
+				type: 'GET',
+				beforeSend: function( xhr ) {
+					xhr.setRequestHeader( 'X-WP-Nonce', CLC_Control_Settings.nonce );
+				},
+				complete: _.bind( this.handleResponse, this )
+			});
+		},
+
+		/**
+		 * Handle response from search query
+		 *
+		 * @since 0.1
+		 */
+		handleResponse: function( response ) {
+			if ( typeof response === 'undefined' || response.status !== 200 ) {
+				return;
+			}
+
+			var data = response.responseJSON;
+			if ( typeof data.search === 'undefined' || data.search != this.search ) {
+				return;
+			}
+
+			this.updateState( 'waiting' );
+			this.collection.reset( data.links );
+			this.renderCollection();
+		},
+
+		/**
+		 * Update view state
+		 *
+		 * @since 0.1
+		 */
+		updateState: function( state ) {
+			if ( state ) {
+				this.state = state;
+			}
+
+			this.$el.removeClass( 'waiting fetching' );
+			this.$el.addClass( this.state );
+		},
+
+		/**
+		 * Update link details
+		 *
+		 * @since 0.1
+		 */
+		updateLink: function( model ) {
+			this.url.val( model.get( 'permalink' ) );
+			this.link_text.val( model.get( 'title' ) );
+			this.setButtonState();
+		},
+
+		/**
+		 * Enable/disable the add link button
+		 *
+		 * @since 0.1
+		 */
+		setButtonState: function() {
+			if ( this.isLinkValid() ) {
+				this.add_link.removeAttr( 'disabled' );
+			} else {
+				this.add_link.attr( 'disabled', 'disabled' );
+			}
+		},
+
+		/**
+		 * Check if details about the link are sufficient
+		 *
+		 * @since 0.1
+		 */
+		isLinkValid: function() {
+			return this.url.val() && this.link_text.val();
+		},
+
+		/**
+		 * Add a link to the component
+		 *
+		 * @since 0.1
+		 */
+		add: function() {
+			if ( !this.isLinkValid ) {
+				return;
+			}
+
+			this.component.trigger( 'content-block-add-link.clc', { url: this.url.val(), link_text: this.link_text.val() } );
+		}
+	});
+
+	/**
+	* Link selection view
+	*
+	* @augments wp.Backbone.View
+	* @since 0.1
+	*/
+	clc.Views.LinkSummary = wp.Backbone.View.extend({
+		tagName: 'li',
+
+		template: wp.template( 'clc-component-content-block-link-summary' ),
+
+		events: {
+			'click': 'select',
+		},
+
+		initialize: function( options ) {
+			// Store reference to link panel
+			_.extend( this, _.pick( options, 'link_panel' ) );
+		},
+
+		/**
+		 * Select this link
+		 *
+		 * @since 0.1
+		 */
+		select: function() {
+			this.link_panel.trigger( 'content-block-select-link.clc', this.model );
+		}
 	});
 
 } )( jQuery );

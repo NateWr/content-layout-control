@@ -32,11 +32,7 @@
 		margin-top: -20px; // Can't center with transforms because of animation
 		margin-left: -20px;
 		.animation( clc_spin 1s linear infinite );
-		border-radius: 100%;
-		border-top: 4px solid @text;
-		border-bottom: 4px solid transparent;
-		border-left: 4px solid @text;
-		border-right: 4px solid transparent;
+		.halfcircle( 4px, @text );
 		background: rgba(255,255,255,0.5);
 	}
 }

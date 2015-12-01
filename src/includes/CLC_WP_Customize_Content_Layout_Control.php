@@ -212,13 +212,13 @@ if ( !class_exists( 'CLC_WP_Customize_Content_Layout_Control' ) ) {
 
 			// Print component list container
 			?>
-			<div id="clc-component-list">
+			<div id="clc-secondary-panel">
 				<div class="clc-header">
 					<a href="#" class="clc-close button-secondary">
 						<?php esc_html_e( CLC_Content_Layout_Control::$i18n['close'] ); ?>
 					</a>
 				</div>
-				<ul class="clc-list"></ul>
+				<div class="clc-secondary-content"></div>
 			</div>
 			<?php
 		}

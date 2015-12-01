@@ -54,3 +54,12 @@
 		.transform(rotateZ(0deg));
 	}
 }
+
+// Half-circle border
+.halfcircle( @size, @color ) {
+	border-radius: 100%;
+	border-top: @size solid @color;
+	border-bottom: @size solid transparent;
+	border-left: @size solid @color;
+	border-right: @size solid transparent;
+}

@@ -2,10 +2,11 @@
 /**
  * Layout template for the content-block component
  *
- * @param $this->image int Image attachment ID
- * @param $this->image_position string Position of the image: left|right|background
  * @param $this->title string Title text string
  * @param $this->content string Content text string
+ * @param $this->links array List of links [ url: 'http://...', link_text: 'Click Here']
+ * @param $this->image int Image attachment ID
+ * @param $this->image_position string Position of the image: left|right|background
  * @since 0.1
  */
 ?>
@@ -23,6 +24,15 @@
 		<div class="content">
 			<?php echo $this->content; ?>
 		</div>
+		<?php if ( !empty( $this->links ) ) : ?>
+			<ul class="links">
+				<?php foreach( $this->links as $link ) : ?>
+					<li>
+						<a href="<?php echo esc_url( $link['url'] ); ?>"><?php esc_html_e( $link['link_text'] ); ?></a>
+					</li>
+				<?php endforeach; ?>
+			</ul>
+		<?php endif; ?>
 	</div>
 </div>
 <?php
