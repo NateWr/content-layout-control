@@ -433,17 +433,17 @@
 			control.added_components_view.render();
 
 			// Register events
-			_.bindAll( control, 'toggleSecondaryPanel', 'addComponent', 'updateSetting', 'onPageRefresh', 'focusComponent' );
-			control.container.on( 'click keydown', '.add-component', control.toggleSecondaryPanel );
-			wp.customize.previewer.bind( 'previewer-reset.clc', this.onPageRefresh );
-			wp.customize.previewer.bind( 'edit-component.clc', this.focusComponent );
+			_.bindAll( control, 'toggleComponentPanel', 'openComponentPanel', 'closeComponentPanel', 'addComponent', 'updateSetting', 'onPageRefresh', 'focusComponent' );
+			control.container.on( 'click', '.add-component', control.toggleComponentPanel );
+			wp.customize.previewer.bind( 'previewer-reset.clc', control.onPageRefresh );
+			wp.customize.previewer.bind( 'edit-component.clc', control.focusComponent );
 
 			// Listen to the close button in the component list
 			$( '#clc-secondary-panel .clc-header' ).on( 'click keydown', '.clc-close', function( event ) {
 				if ( wp.customize.utils.isKeydownButNotEnterEvent( event ) ) {
 					return;
 				}
-				control.closeSecondaryPanel();
+				control.closeComponentPanel();
 			});
 
 			// Make the list sortable
@@ -451,7 +451,7 @@
 				placeholder: 'clc-content-list-placeholder',
 				delay: '150',
 				handle: '.header',
-				update: this.sortingComplete
+				update: control.sortingComplete
 			});
 		},
 
@@ -474,20 +474,27 @@
 		 *
 		 * @since 0.1
 		 */
-		toggleSecondaryPanel: function( event ) {
-
-			if ( wp.customize.utils.isKeydownButNotEnterEvent( event ) ) {
-				return;
-			}
-
+		toggleComponentPanel: function( event ) {
 			event.preventDefault();
 
-			if ( !$( 'body' ).hasClass( 'clc-secondary-open' ) ) {
-				clc.selection_list.collection = this.allowed_components;
-				clc.selection_list.render();
+			if ( $( '#customize-control-' + this.id ).hasClass( 'clc-component-list-open' ) ) {
+				this.closeComponentPanel();
+			} else {
+				this.openComponentPanel();
 			}
+		},
 
-			$( 'body' ).toggleClass( 'clc-secondary-open' );
+		/**
+		 * Open the component list
+		 *
+		 * @since 0.1
+		 */
+		openComponentPanel: function() {
+			this.sendEvent( 'component-list-opened.clc' );
+			clc.selection_list.collection = this.allowed_components;
+			clc.selection_list.render();
+			$( 'body' ).addClass( 'clc-secondary-open' );
+			$( '#customize-control-' + this.id ).addClass( 'clc-component-list-open' );
 		},
 
 		/**
@@ -495,8 +502,10 @@
 		 *
 		 * @since 0.1
 		 */
-		closeSecondaryPanel: function() {
+		closeComponentPanel: function() {
+			this.sendEvent( 'component-list-closed.clc' );
 			$( 'body' ).removeClass( 'clc-secondary-open' );
+			$( '#customize-control-' + this.id ).removeClass( 'clc-component-list-open' );
 		},
 
 		/**
@@ -526,7 +535,7 @@
 
 			this.added_components.add( new clc.Models.component_models[type]( atts ).toJSON() );
 
-			this.closeSecondaryPanel();
+			this.closeComponentPanel();
 		},
 
 		/**
@@ -589,6 +598,17 @@
 		focusComponent: function( id ) {
 			this.focus();
 			this.added_components.get( id ).trigger( 'focus' );
+		},
+
+		/**
+		 * Send an event to the componentts
+		 *
+		 * @since 0.1
+		 */
+		sendEvent: function( event, data ) {
+			this.added_components.each( function( model ) {
+				model.trigger( event, data );
+			});
 		}
 	});
 

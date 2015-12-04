@@ -57,6 +57,11 @@
 			this.listenTo(this.model, 'change', this.componentChanged);
 			this.listenTo(this.model, 'focus', this.focus);
 			this.listenTo(this, 'content-block-add-link.clc', this.addLink );
+
+			// Ensure the add-link open/closed states are updated when the
+			// secondary panel is closed
+			this.listenTo(this.model, 'component-list-opened.clc', this.closeLinkPanel);
+			this.listenTo(this.model, 'component-list-closed.clc', this.closeLinkPanel);
 		},
 
 		render: function() {
@@ -249,7 +254,8 @@
 		toggleLinkPanel: function( event ) {
 			event.preventDefault();
 
-			if ( !$( 'body' ).hasClass( 'clc-secondary-open' ) ) {
+			if ( !this.$el.hasClass( 'clc-control-links-open' ) ) {
+				this.control.closeComponentPanel();
 				this.openLinkPanel();
 			} else {
 				this.closeLinkPanel();
@@ -283,7 +289,9 @@
 		closeLinkPanel: function() {
 			$( 'body' ).removeClass( 'clc-secondary-open' );
 			this.$el.removeClass( 'clc-control-links-open' );
-			this.link_panel.remove();
+			if ( this.link_panel ) {
+				this.link_panel.remove();
+			}
 		},
 
 		/**
@@ -337,7 +345,7 @@
 		},
 
 		render: function() {
-			this.$el.empty();
+			$( '#clc-secondary-panel .clc-secondary-content' ).empty();
 
 			wp.Backbone.View.prototype.render.apply( this );
 
