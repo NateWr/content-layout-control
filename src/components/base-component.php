@@ -95,7 +95,7 @@ if ( !class_exists( 'CLC_Component' ) ) {
 
 			foreach( $this->settings as $setting ) {
 				if (  isset( $this->{$setting} ) ) {
-					$atts[$setting] =$this->{$setting};
+					$atts[$setting] = $this->{$setting};
 				}
 			}
 
