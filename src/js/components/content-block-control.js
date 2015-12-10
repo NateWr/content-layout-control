@@ -411,7 +411,7 @@
 		 * @since 0.1
 		 */
 		fetchLinks: function( search ) {
-			this.search = search;
+			this.search = search.replace( /\s+/g, '+' );
 			this.updateState( 'fetching' );
 
 			$.ajax({
