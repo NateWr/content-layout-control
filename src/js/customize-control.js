@@ -54,6 +54,7 @@
 		 * @since 0.1
 		 */
 		Added: Backbone.Collection.extend({
+
 			initialize: function( models, options ) {
 				// Store reference to control
 				_.extend( this, _.pick( options, 'control' ) );
@@ -573,12 +574,33 @@
 			this.post_id = data.post_id;
 
 			if ( typeof this.edited_posts[this.post_id] === 'undefined' ) {
-				this.edited_posts[this.post_id] = data.components;
+				this.edited_posts[this.post_id] = this.createModels( data.components );
 			}
 
 			this.added_components.reset( this.edited_posts[this.post_id], { control: this } );
 
 			wp.customize.previewer.send( 'refresh-layout.clc', this.added_components.generateArray() );
+		},
+
+		/**
+		 * Instantiate models when passed an array of component objects
+		 *
+		 * @since 0.1
+		 */
+		createModels: function( components ) {
+			var models = [];
+
+			for ( var i in components ) {
+				// Don't add un-allowed components. This prevents errors from
+				// old data if allowed components change.
+				// @TODO situations like this should alert the user and try to
+				//  handle old data gracefully.
+				if ( this.allowed_components.findWhere({ type: components[i].type }) ) {
+					models.push( new clc.Models.component_models[components[i].type]( components[i] ) );
+				}
+			}
+
+			return models;
 		},
 
 		/**
