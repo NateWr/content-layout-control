@@ -30,12 +30,19 @@
 				box-shadow: 0 0 2px rgba(0,0,0,0.6);
 
 				&:after {
+					@content_block_links_box: @double + @base - 2;
 					content: '\f504';
-					display: inline-block;
-					padding-left: 0.5em;
+					display: block;
+					position: absolute;
+					top: 0;
+					right: @content_block_links_box;
+					width: @content_block_links_box;
+					height: @content_block_links_box;
+					background: @shade;
 					font-family: 'dashicons';
+					line-height: @double + @base;
+					text-align: center;
 					speak: none;
-					line-height: 1;
 					vertical-align: middle;
 					color: #777;
 				}
