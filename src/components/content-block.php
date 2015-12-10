@@ -61,7 +61,7 @@ if ( !class_exists( 'CLC_Component_Content_Block' ) ) {
 		 * @param array Setting keys
 		 * @since 0.1
 		 */
-		public $settings = array( 'image', 'title', 'content' );
+		public $settings = array( 'title', 'content', 'links', 'image', 'image_position' );
 
 		/**
 		 * Initialize
