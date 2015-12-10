@@ -6,7 +6,7 @@
  * @param $this->content string Content text string
  * @param $this->links array List of links [ url: 'http://...', link_text: 'Click Here']
  * @param $this->image int Image attachment ID
- * @param $this->image_position string Position of the image: left|right|background
+ * @param $this->image_position string Position of the image: left|right
  * @since 0.1
  */
 ?>

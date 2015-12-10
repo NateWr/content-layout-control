@@ -50,7 +50,7 @@ if ( !class_exists( 'CLC_Component_Content_Block' ) ) {
 		/**
 		 * Image position
 		 *
-		 * @param string left|right|background
+		 * @param string left|right
 		 * @since 0.1
 		 */
 		public $image_position = 'left';

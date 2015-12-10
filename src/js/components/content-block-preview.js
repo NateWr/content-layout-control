@@ -71,7 +71,7 @@
 		 * @since 0.1
 		 */
 		updateImagePosition: function( position ) {
-			this.$el.find( '.clc-wrapper' ).removeClass( 'image-position-left image-position-right image-position-background' )
+			this.$el.find( '.clc-wrapper' ).removeClass( 'image-position-left image-position-right' )
 				.addClass( 'image-position-' + position );
 		}
 	});

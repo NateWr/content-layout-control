@@ -56,10 +56,6 @@
 					<input type="radio" name="image_position_{{ data.model.get( 'id' ) }}" value="right"<# if ( data.model.get( 'image_position' ) == 'right' ) { #> checked<# } #>>
 					<?php echo $this->i18n['image_position_right']; ?>
 				</label>
-				<label>
-					<input type="radio" name="image_position_{{ data.model.get( 'id' ) }}" value="background"<# if ( data.model.get( 'image_position' ) == 'background' ) { #> checked<# } #>>
-					<?php echo $this->i18n['image_position_background']; ?>
-				</label>
 			</fieldset>
 		<# } #>
 		<div class="buttons">
