@@ -75,5 +75,5 @@
 	</div>
 </div>
 <div class="footer">
-	<a href="#" class="delete">Delete</a>
+	<a href="#" class="delete"><?php esc_html_e( CLC_Content_Layout_Control::$i18n['delete'] ); ?></a>
 </div>
