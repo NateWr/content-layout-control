@@ -17,6 +17,7 @@
 			image_position: 'left',
 			title:          '',
 			content:        '',
+			links:          [],
 			order:          0
 		}
 	});
