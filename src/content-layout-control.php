@@ -233,15 +233,6 @@ if ( !class_exists( 'CLC_Content_Layout_Control' ) ) {
 		}
 
 		/**
-		 * Template for a component in the selection list
-		 *
-		 * @since 0.1
-		 */
-		public function component_summary_template() {
-			include( self::$dir . '/js/templates/component-summary.js' );
-		}
-
-		/**
 		 * Render out the layout when passed an array of component values
 		 *
 		 * Expect components to have been registered with $this->_load_components()

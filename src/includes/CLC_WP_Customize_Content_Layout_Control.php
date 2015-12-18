@@ -200,7 +200,8 @@ if ( !class_exists( 'CLC_WP_Customize_Content_Layout_Control' ) ) {
 
 			// Add template for component selection view
 			?>
-			<script type="text/html" id="tmpl-clc-component-summary"><?php $clc->component_summary_template(); ?></script>
+			<script type="text/html" id="tmpl-clc-secondary-panel"><?php include( $clc::$dir . '/js/templates/secondary-panel.js' ); ?></script>
+			<script type="text/html" id="tmpl-clc-component-summary"><?php include( $clc::$dir . '/js/templates/component-summary.js' ); ?></script>
 			<?php
 
 			// Print each component's control template
@@ -209,18 +210,6 @@ if ( !class_exists( 'CLC_WP_Customize_Content_Layout_Control' ) ) {
 				<script type="text/html" id="tmpl-clc-component-<?php esc_attr_e( $id ); ?>"><?php $component->control_template(); ?></script>
 				<?php
 			}
-
-			// Print component list container
-			?>
-			<div id="clc-secondary-panel">
-				<div class="clc-header">
-					<a href="#" class="clc-close button-secondary">
-						<?php esc_html_e( CLC_Content_Layout_Control::$i18n['close'] ); ?>
-					</a>
-				</div>
-				<div class="clc-secondary-content"></div>
-			</div>
-			<?php
 		}
 
 		/**

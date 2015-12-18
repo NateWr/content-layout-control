@@ -88,13 +88,101 @@
 		})
 	};
 
-
 	/**
 	 * Define views
 	 *
 	 * @since 0.1
 	 */
 	clc.Views = {
+		/**
+		 * Secondary control panel
+		 *
+		 * This view implements a secondary control panel for expanded selection
+		 * and input. It acts as a generic event bridge for communicating
+		 * between actions in the panel and their associated control/component.
+		 *
+		 * @since 0.1
+		 */
+		SecondaryPanel: wp.Backbone.View.extend({
+			template: wp.template( 'clc-secondary-panel' ),
+
+			id: 'clc-secondary-panel',
+
+			events: {
+				'click .clc-close': 'close',
+			},
+
+			initialize: function( options ) {
+				_.extend( this, _.pick( options, 'control' ) );
+
+				this.listenTo( this, 'load-secondary-panel.clc', this.load );
+				this.listenTo( this, 'close-secondary-panel.clc', this.close );
+			},
+
+			/**
+			 * Load a new panel
+			 *
+			 * @param view wp.Backbone.View view to load
+			 * @since 0.1
+			 */
+			load: function( view, component ) {
+
+				$( 'body' ).addClass( 'clc-secondary-open' );
+
+				// View hasn't changed
+				if ( typeof this.view !== 'undefined' && this.view.cid === view.cid ) {
+					return;
+				}
+
+				// Clean up existing view
+				if ( typeof this.view !== 'undefined' ) {
+					this.sendClose();
+					this.view.remove(); // Cleanup listeners
+				}
+
+				// Load the new view
+				this.view = view;
+				this.view.render();
+				this.$el.find( '.clc-secondary-content' ).html( this.view.el )
+					.find( 'a, input, textarea, select, button' ).first().focus();
+			},
+
+			/**
+			 * Close the panel
+			 *
+			 * @since 0.1
+			 */
+			close: function() {
+				this.sendClose();
+				$( 'body' ).removeClass( 'clc-secondary-open' );
+			},
+
+			/**
+			 * Send an event to the attached control/component
+			 *
+			 * @param string name Trigger name. Should be namespaced: anything.clc
+			 * @param object data Optional data to pass with the event
+			 * @since 0.1
+			 */
+			send: function( name, data ) {
+				if ( typeof this.control !== 'undefined' ) {
+					this.control.container.trigger( name, data );
+				}
+				if ( typeof this.component !== 'undefined' ) {
+					this.component.trigger( name, data );
+				}
+			},
+
+			/**
+			 * Send closed event
+			 *
+			 * @since 0.1
+			 */
+			sendClose: function() {
+				this.send( 'secondary-panel-closed.clc', this.view );
+			}
+		}),
+
 		/**
 		 * Summary of a component to appear in selection lists
 		 *
@@ -107,7 +195,6 @@
 			template: wp.template( 'clc-component-summary' ),
 
 			events: {
-				// @TODO selecting components should be keyboard-accessible
 				'click': 'add'
 			},
 
@@ -116,10 +203,10 @@
 				_.extend( this, _.pick( options, 'control' ) );
 			},
 
-			add: function(e) {
-				e.preventDefault();
-				e.stopPropagation();
+			add: function( event ) {
+				event.preventDefault();
 				this.control.addComponent( this.model.get( 'type' ) );
+				this.control.closeComponentPanel();
 			}
 		}),
 
@@ -129,7 +216,7 @@
 		 * @augments wp.Backbone.View
 		 * @since 0.1
 		 */
-		SelectionList: wp.Backbone.View.extend({
+		ComponentList: wp.Backbone.View.extend({
 			initialize: function( options ) {
 				// Store reference to control
 				_.extend( this, _.pick( options, 'control' ) );
@@ -224,7 +311,6 @@
 				'click .clc-toggle-component-form': 'toggleDisplay',
 				'click .delete': 'delete',
 				'blur [data-clc-setting-link]': 'updateLinkedSetting',
-				'onchange [data-clc-setting-link]': 'updateLinkedSetting',
 				'reordered': 'reordered',
 			},
 
@@ -408,12 +494,12 @@
 		ready: function() {
 			var control = this;
 
-			// Attach an empty list selection view to the DOM
-			clc.selection_list = new clc.Views.SelectionList({
-				el: '#clc-secondary-panel .clc-secondary-content',
-				collection: new Backbone.Collection(),
-				control: control
+			// Initialize the secondary panel
+			clc.secondary_panel = new clc.Views.SecondaryPanel({
+				control: control,
 			});
+			clc.secondary_panel.render();
+			$( '.wp-full-overlay' ).append( clc.secondary_panel.el );
 
 			// Generate the collection of allowed components
 			control.allowed_components = new Backbone.Collection();
@@ -423,6 +509,13 @@
 					control.allowed_components.add( new clc.Models.component_models[type]( clc_components[type] ) );
 				}
 			}
+
+			// Initialize the component selection list view
+			clc.component_list_view = new clc.Views.ComponentList({
+				className: 'clc-component-list',
+				collection: control.allowed_components,
+				control: control
+			});
 
 			// Generate an (empty) collection of components added to this control
 			control.added_components = new clc.Collections.Added( [], { control: control } );
@@ -434,18 +527,11 @@
 			control.added_components_view.render();
 
 			// Register events
-			_.bindAll( control, 'toggleComponentPanel', 'openComponentPanel', 'closeComponentPanel', 'addComponent', 'updateSetting', 'onPageRefresh', 'focusComponent' );
+			_.bindAll( control, 'toggleComponentPanel', 'openComponentPanel', 'closeComponentPanel', 'secondaryPanelClosed', 'addComponent', 'updateSetting', 'onPageRefresh', 'focusComponent' );
 			control.container.on( 'click', '.add-component', control.toggleComponentPanel );
+			control.container.on( 'secondary-panel-closed.clc', control.secondaryPanelClosed );
 			wp.customize.previewer.bind( 'previewer-reset.clc', control.onPageRefresh );
 			wp.customize.previewer.bind( 'edit-component.clc', control.focusComponent );
-
-			// Listen to the close button in the component list
-			$( '#clc-secondary-panel .clc-header' ).on( 'click keydown', '.clc-close', function( event ) {
-				if ( wp.customize.utils.isKeydownButNotEnterEvent( event ) ) {
-					return;
-				}
-				control.closeComponentPanel();
-			});
 
 			// Make the list sortable
 			$( '#customize-control-' + control.id + ' .clc-content-list' ).sortable({
@@ -491,10 +577,7 @@
 		 * @since 0.1
 		 */
 		openComponentPanel: function() {
-			this.sendEvent( 'component-list-opened.clc' );
-			clc.selection_list.collection = this.allowed_components;
-			clc.selection_list.render();
-			$( 'body' ).addClass( 'clc-secondary-open' );
+			clc.secondary_panel.trigger( 'load-secondary-panel.clc', clc.component_list_view );
 			$( '#customize-control-' + this.id ).addClass( 'clc-component-list-open' );
 		},
 
@@ -504,9 +587,18 @@
 		 * @since 0.1
 		 */
 		closeComponentPanel: function() {
-			this.sendEvent( 'component-list-closed.clc' );
-			$( 'body' ).removeClass( 'clc-secondary-open' );
-			$( '#customize-control-' + this.id ).removeClass( 'clc-component-list-open' );
+			clc.secondary_panel.trigger( 'close-secondary-panel.clc' );
+		},
+
+		/**
+		 * React to the secondary panel being closed
+		 *
+		 * @since 0.1
+		 */
+		secondaryPanelClosed: function( event, view ) {
+			if ( view.cid === clc.component_list_view.cid ) {
+				$( '#customize-control-' + this.id ).removeClass( 'clc-component-list-open' );
+			}
 		},
 
 		/**
@@ -535,8 +627,6 @@
 			atts.id = get_unique_id( _.uniqueId(), this.added_components );
 
 			this.added_components.add( new clc.Models.component_models[type]( atts ).toJSON() );
-
-			this.closeComponentPanel();
 		},
 
 		/**
