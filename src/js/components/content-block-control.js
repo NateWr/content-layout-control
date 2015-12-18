@@ -285,6 +285,7 @@
 		secondaryPanelClosed: function( view ) {
 			if ( view.cid === clc.link_panel_view.cid ) {
 				this.$el.removeClass( 'clc-links-panel-open' );
+				this.$el.find( '.add-link' ).focus();
 			}
 		},
 
