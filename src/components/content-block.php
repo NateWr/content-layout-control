@@ -64,17 +64,6 @@ if ( !class_exists( 'CLC_Component_Content_Block' ) ) {
 		public $settings = array( 'title', 'content', 'links', 'image', 'image_position' );
 
 		/**
-		 * Initialize
-		 *
-		 * @since 0.1
-		 */
-		public function __construct( $args ) {
-			parent::__construct( $args );
-
-			add_action( 'customize_controls_print_footer_scripts', array( $this, 'add_link_selection_templates' ) );
-		}
-
-		/**
 		 * Sanitize settings
 		 *
 		 * @param array val Values to be sanitized
@@ -96,25 +85,6 @@ if ( !class_exists( 'CLC_Component_Content_Block' ) ) {
 		}
 
 		/**
-		 * Enqueue customizer control assets
-		 *
-		 * @since 0.1
-		 */
-		public function enqueue_control_assets() {
-			wp_enqueue_style( 'clc-component-content-block-control', CLC_Content_Layout_Control::$url . '/css/components/content-block-control.css' );
-			wp_enqueue_script( 'clc-component-content-block-control-js', CLC_Content_Layout_Control::$url  . '/js/components/content-block-control.js', array( 'customize-controls', 'clc-customize-control-js' ), '0.1', true );
-		}
-
-		/**
-		 * Enqueue customizer preview assets
-		 *
-		 * @since 0.1
-		 */
-		public function enqueue_preview_assets() {
-			wp_enqueue_script( 'clc-component-content-block-preview-js', CLC_Content_Layout_Control::$url  . '/js/components/content-block-preview.js', array( 'clc-customize-preview-js' ), '0.1', true );
-		}
-
-		/**
 		 * Render the layout template and return an HTML blob with the content,
 		 * ready to be appended or saved to `post_content`
 		 *
@@ -132,18 +102,6 @@ if ( !class_exists( 'CLC_Component_Content_Block' ) ) {
 		 */
 		public function control_template() {
 			include( CLC_Content_Layout_Control::$dir . '/js/templates/components/content-block.js' );
-		}
-
-		/**
-		 * Add link selection templates to the control frame
-		 *
-		 * @since 0.1
-		 */
-		public function add_link_selection_templates() {
-			?>
-			<script type="text/html" id="tmpl-clc-component-content-block-link-selection"><?php include( CLC_Content_Layout_Control::$dir . '/js/templates/components/content-block-link-selection.js' ); ?></script>
-			<script type="text/html" id="tmpl-clc-component-content-block-link-summary"><?php include( CLC_Content_Layout_Control::$dir . '/js/templates/components/content-block-link-summary.js' ); ?></script>
-			<?php
 		}
 
 		/**

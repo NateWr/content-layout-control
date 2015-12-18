@@ -14,10 +14,10 @@
 		<span class="customize-control-title"><?php echo $this->i18n['content']; ?></span>
 		<textarea data-clc-setting-link="content">{{ data.model.get( 'content' ) }}</textarea>
 	</label>
-	<div class="setting">
+	<div class="setting link-panel-control">
 		<span class="customize-control-title"><?php echo $this->i18n['links']; ?></span>
 		<# if ( data.model.get( 'links' ).length ) { #>
-			<ul class="content-block-links">
+			<ul class="link-panel-control-links">
 				<# for ( var i in data.model.get( 'links' ) ) { #>
 					<li>
 						<a href="{{ data.model.get( 'links' )[i].url }}" class="link" target="_blank">

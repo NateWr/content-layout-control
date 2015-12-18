@@ -144,7 +144,13 @@
 				this.view = view;
 				this.view.render();
 				this.$el.find( '.clc-secondary-content' ).html( this.view.el )
-					.find( 'a, input, textarea, select, button' ).first().focus();
+					.find( 'label, input, textarea, select, a, button' ).first().focus();
+
+				// Update component
+				delete this.component;
+				if ( typeof component !== 'undefined' ) {
+					this.component = component;
+				}
 			},
 
 			/**
@@ -525,6 +531,11 @@
 				control: control
 			});
 			control.added_components_view.render();
+
+			// Initialize the link panel
+			clc.link_panel_view = new clc.Views.LinkPanel({
+				collection: new Backbone.Collection(),
+			});
 
 			// Register events
 			_.bindAll( control, 'toggleComponentPanel', 'openComponentPanel', 'closeComponentPanel', 'secondaryPanelClosed', 'addComponent', 'updateSetting', 'onPageRefresh', 'focusComponent' );

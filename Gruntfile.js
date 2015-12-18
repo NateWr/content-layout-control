@@ -17,8 +17,10 @@ module.exports = function(grunt) {
 					ieCompat: true
 				},
 				files: {
-					'dist/css/customize-control.css': 'src/less/customize-control.less',
-					'dist/css/components/content-block-control.css': 'src/less/components/content-block-control.less',
+					'dist/css/customize-control.css': [
+						'src/less/customize-control.less',
+						'src/less/components/content-block-control.less',
+					],
 					'dist/css/customize-preview.css': 'src/less/customize-preview.less',
 				}
 			}
@@ -33,6 +35,23 @@ module.exports = function(grunt) {
 					'src/js/customize-preview.js',
 					'src/js/components/**/*.js'
 				]
+			}
+		},
+
+		// Concatenate scripts
+		concat: {
+			build: {
+				files: {
+					'dist/js/customize-control.js': [
+						'src/js/customize-control.js',
+						'src/js/customize-control-link-panel.js',
+						'src/js/components/*-control.js',
+					],
+					'dist/js/customize-preview.js': [
+						'src/js/customize-preview.js',
+						'src/js/components/*-preview.js',
+					],
+				}
 			}
 		},
 
@@ -65,6 +84,8 @@ module.exports = function(grunt) {
 				cwd: 'src/',
 				src: [
 					'**',
+					'!js/*.js',
+					'!js/components/**',
 					'!less/**',
 					'!.*', // hidden files
 					'!**/*~' // hidden files
@@ -99,6 +120,6 @@ module.exports = function(grunt) {
 
 	// Default task(s).
 	grunt.registerTask('default', ['watch:js']);
-	grunt.registerTask('build', ['jshint', 'clean', 'less', 'copy'] );
+	grunt.registerTask('build', ['jshint', 'clean', 'less', 'concat', 'copy'] );
 
 };

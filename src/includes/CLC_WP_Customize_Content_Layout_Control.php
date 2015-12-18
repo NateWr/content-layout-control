@@ -41,6 +41,20 @@ if ( !class_exists( 'CLC_WP_Customize_Content_Layout_Control' ) ) {
 		public function __construct( $manager, $id, $args = array() ) {
 			parent::__construct( $manager, $id, $args );
 
+			// To render the control templates, the customizer manager creates
+			// a fake instantiation of each control with an id of `temp` and
+			// then calls print_template on it. As a result, any hooks added in
+			// the construct function will be hooked twice. @TODO This needs to
+			// be resolved by moving each of these hooks into the controller
+			// class, along with the i18n values which are used by several of
+			// the templates. Many of the functions can likely stay in this
+			// class, but they need to be called from the controller. This is
+			// probably best so that two controls of this class could someday
+			// be added at once.
+			if ( $this->id  == 'temp' ) {
+				return;
+			}
+
 			add_action( 'customize_controls_enqueue_scripts', array( $this, 'enqueue_control_assets' ) );
 			add_action( 'customize_controls_print_footer_scripts', array( $this, 'add_component_templates' ) );
 			add_action( 'customize_preview_init', array( $this, 'enqueue_preview_assets' ) );
@@ -202,6 +216,8 @@ if ( !class_exists( 'CLC_WP_Customize_Content_Layout_Control' ) ) {
 			?>
 			<script type="text/html" id="tmpl-clc-secondary-panel"><?php include( $clc::$dir . '/js/templates/secondary-panel.js' ); ?></script>
 			<script type="text/html" id="tmpl-clc-component-summary"><?php include( $clc::$dir . '/js/templates/component-summary.js' ); ?></script>
+			<script type="text/html" id="tmpl-clc-secondary-panel-link-selection"><?php include( $clc::$dir . '/js/templates/secondary-panel-link-selection.js' ); ?></script>
+			<script type="text/html" id="tmpl-clc-secondary-panel-link-summary"><?php include( $clc::$dir . '/js/templates/components/content-block-link-summary.js' ); ?></script>
 			<?php
 
 			// Print each component's control template
