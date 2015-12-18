@@ -20,6 +20,8 @@
 			'keyup .clc-link-panel-url': 'setButtonState',
 			'keyup .clc-link-panel-link-text': 'setButtonState',
 			'click .add-link': 'add',
+			'click .search-content-link': 'openSearch',
+			'click .back-to-search-form': 'closeSearch',
 		},
 
 		initialize: function( options ) {
@@ -55,6 +57,31 @@
 			this.collection.each( function( model ) {
 				list.append( new clc.Views.LinkSummary( { model: model, link_panel_view: this } ).render().el );
 			}, this );
+		},
+
+		/**
+		 * Open the search view
+		 *
+		 * @since 0.1
+		 */
+		openSearch: function( event ) {
+			event.preventDefault();
+			this.$el.addClass( 'search-visible' );
+			this.search_input.focus();
+		},
+
+		/**
+		 * Close the search window
+		 *
+		 * @since 0.1
+		 */
+		closeSearch: function( event ) {
+			if ( typeof event !== 'undefined' ) {
+				event.preventDefault();
+			}
+
+			this.$el.removeClass( 'search-visible' );
+			this.add_link.focus();
 		},
 
 		/**
@@ -160,6 +187,7 @@
 			this.url.val( model.get( 'permalink' ) );
 			this.link_text.val( model.get( 'title' ) );
 			this.setButtonState();
+			this.closeSearch();
 		},
 
 		/**

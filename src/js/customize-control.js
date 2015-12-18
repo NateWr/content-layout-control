@@ -131,6 +131,7 @@
 
 				// View hasn't changed
 				if ( typeof this.view !== 'undefined' && this.view.cid === view.cid ) {
+					this.view.render();
 					return;
 				}
 
