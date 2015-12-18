@@ -217,7 +217,7 @@ if ( !class_exists( 'CLC_WP_Customize_Content_Layout_Control' ) ) {
 			<script type="text/html" id="tmpl-clc-secondary-panel"><?php include( $clc::$dir . '/js/templates/secondary-panel.js' ); ?></script>
 			<script type="text/html" id="tmpl-clc-component-summary"><?php include( $clc::$dir . '/js/templates/component-summary.js' ); ?></script>
 			<script type="text/html" id="tmpl-clc-secondary-panel-link-selection"><?php include( $clc::$dir . '/js/templates/secondary-panel-link-selection.js' ); ?></script>
-			<script type="text/html" id="tmpl-clc-secondary-panel-link-summary"><?php include( $clc::$dir . '/js/templates/components/content-block-link-summary.js' ); ?></script>
+			<script type="text/html" id="tmpl-clc-secondary-panel-link-summary"><?php include( $clc::$dir . '/js/templates/secondary-panel-link-summary.js' ); ?></script>
 			<?php
 
 			// Print each component's control template
