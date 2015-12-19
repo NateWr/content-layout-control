@@ -32,5 +32,5 @@
 		&larr;
 		<?php echo $this->i18n['links_back']; ?>
 	</a>
+	<ul class="clc-link-panel-list"></ul>
 </div>
-<ul class="clc-link-panel-list"></ul>
