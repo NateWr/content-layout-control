@@ -3,38 +3,18 @@
 	var clc = wp.customize.ContentLayoutControl;
 
 	/**
-	 * Model class for the Content Block component
-	 *
-	 * @augments Backbone.Model
-	 * @since 0.1
-	 */
-	clc.Models.component_models['content-block'] = clc.Models.Component.extend({
-		defaults: {
-			name:           '',
-			description:    '',
-			type:           'content-block',
-			image:          0,
-			image_position: 'left',
-			title:          '',
-			content:        '',
-			links:          [],
-			order:          0
-		}
-	});
-
-	/**
 	 * View class for the Content Block layout
 	 *
 	 * @augments wp.customize.ContentLayoutControl.Views.BaseComponentForm
 	 * @augments wp.Backbone.View
 	 * @since 0.1
 	 */
-	clc.Views.component_views['content-block'] = clc.Views.BaseComponentLayout.extend({
+	clc.Views.component_previews['content-block'] = clc.Views.BaseComponentPreview.extend({
 		/**
-		* Initialize
-		*
-		* @since 0.1
-		*/
+		 * Initialize
+		 *
+		 * @since 0.1
+		 */
 		initialize: function( options ) {
 			this.listenTo( this.model, 'change', this.load );
 			_.bindAll( this, 'settingChanged' );

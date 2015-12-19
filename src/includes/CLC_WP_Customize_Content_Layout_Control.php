@@ -117,14 +117,14 @@ if ( !class_exists( 'CLC_WP_Customize_Content_Layout_Control' ) ) {
 			$clc = CLC_Content_Layout_Control();
 
 			// Load core control style
-			wp_enqueue_style( 'clc-customize-control', CLC_Content_Layout_Control::$url . '/css/customize-control.css', '0.1' );
+			wp_enqueue_style( 'content-layout-control', CLC_Content_Layout_Control::$url . '/css/content-layout-control.css', '0.1' );
 
 			// Load required control, model and view classes
-			wp_enqueue_script( 'clc-customize-control-js', CLC_Content_Layout_Control::$url  . '/js/customize-control.js', array( 'customize-controls' ), '0.1', true );
+			wp_enqueue_script( 'content-layout-control-js', CLC_Content_Layout_Control::$url  . '/js/content-layout-control.js', array( 'customize-controls' ), '0.1', true );
 
 			// Pass settings to the script
 			wp_localize_script(
-				'clc-customize-control-js',
+				'content-layout-control-js',
 				'CLC_Control_Settings',
 				array(
 					'root' 	=> home_url( rest_get_url_prefix() ),
@@ -135,7 +135,7 @@ if ( !class_exists( 'CLC_WP_Customize_Content_Layout_Control' ) ) {
 			// Pass component defaults for locating component-specific
 			// models/views
 			wp_localize_script(
-				'clc-customize-control-js',
+				'content-layout-control-js',
 				'clc_components',
 				$clc->get_component_attributes()
 			);
@@ -156,14 +156,14 @@ if ( !class_exists( 'CLC_WP_Customize_Content_Layout_Control' ) ) {
 		public function enqueue_preview_assets() {
 
 			// Load core preview styles
-			wp_enqueue_style( 'clc-customize-preview', CLC_Content_Layout_Control::$url . '/css/customize-preview.css', '0.1' );
+			wp_enqueue_style( 'content-layout-control', CLC_Content_Layout_Control::$url . '/css/content-layout-control.css', '0.1' );
 
 			// Load required control, model and view classes
-			wp_enqueue_script( 'clc-customize-preview-js', CLC_Content_Layout_Control::$url  . '/js/customize-preview.js', array( 'wp-backbone', 'customize-preview' ), '0.1', true );
+			wp_enqueue_script( 'content-layout-preview-js', CLC_Content_Layout_Control::$url  . '/js/content-layout-preview.js', array( 'wp-backbone', 'customize-preview' ), '0.1', true );
 
 			// Pass settings to the script
 			wp_localize_script(
-				'clc-customize-preview-js',
+				'content-layout-preview-js',
 				'CLC_Preview_Settings',
 				array(
 					'root' 	=> home_url( rest_get_url_prefix() ),
@@ -199,7 +199,7 @@ if ( !class_exists( 'CLC_WP_Customize_Content_Layout_Control' ) ) {
 				$data['components'] = get_post_meta( get_the_ID(), 'content_layout', true );
 			}
 
-			wp_localize_script( 'clc-customize-preview-js', 'clc_customize_preview_data', $data );
+			wp_localize_script( 'content-layout-preview-js', 'clc_customize_preview_data', $data );
 		}
 
 		/**

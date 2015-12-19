@@ -3,33 +3,13 @@
 	var clc = wp.customize.ContentLayoutControl;
 
 	/**
-	 * Model class for the Content Block component
+	 * View class for the Content Block form
 	 *
-	 * @augments Backbone.Model
+	 * @augments wp.customize.ContentLayoutControl.Views.BaseComponentForm
+	 * @augments wp.Backbone.View
 	 * @since 0.1
 	 */
-	clc.Models.component_models['content-block'] = clc.Models.Component.extend({
-		defaults: {
-			name:           '',
-			description:    '',
-			type:           'content-block',
-			image:          0,
-			image_position: 'left',
-			title:          '',
-			content:        '',
-			links:          [],
-			order:          0
-		}
-	});
-
-	/**
-	* View class for the Content Block form
-	*
-	* @augments wp.customize.ContentLayoutControl.Views.BaseComponentForm
-	* @augments wp.Backbone.View
-	* @since 0.1
-	*/
-	clc.Views.component_views['content-block'] = clc.Views.BaseComponentForm.extend({
+	clc.Views.component_controls['content-block'] = clc.Views.BaseComponentForm.extend({
 		template: wp.template( 'clc-component-content-block' ),
 
 		className: 'clc-component-content-block',

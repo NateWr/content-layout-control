@@ -17,11 +17,11 @@ module.exports = function(grunt) {
 					ieCompat: true
 				},
 				files: {
-					'dist/css/customize-control.css': [
-						'src/less/customize-control.less',
-						'src/less/components/content-block-control.less',
+					'dist/css/content-layout-control.css': [
+						'src/less/control.less',
+						'src/less/components/content-block.less',
+						'src/less/preview.less',
 					],
-					'dist/css/customize-preview.css': 'src/less/customize-preview.less',
 				}
 			}
 		},
@@ -31,8 +31,7 @@ module.exports = function(grunt) {
 			test: {
 				src: [
 					'!src/js/templates',
-					'src/js/customize-control.js',
-					'src/js/customize-preview.js',
+					'src/js/*.js',
 					'src/js/components/**/*.js'
 				]
 			}
@@ -42,14 +41,18 @@ module.exports = function(grunt) {
 		concat: {
 			build: {
 				files: {
-					'dist/js/customize-control.js': [
-						'src/js/customize-control.js',
-						'src/js/customize-control-link-panel.js',
-						'src/js/components/*-control.js',
+					'dist/js/content-layout-control.js': [
+						'src/js/content-layout-control.js',
+						'src/js/control.js',
+						'src/js/control-link-panel.js',
+						'src/js/components/model/*.js',
+						'src/js/components/control/*.js',
 					],
-					'dist/js/customize-preview.js': [
-						'src/js/customize-preview.js',
-						'src/js/components/*-preview.js',
+					'dist/js/content-layout-preview.js': [
+						'src/js/content-layout-control.js',
+						'src/js/preview.js',
+						'src/js/components/model/*.js',
+						'src/js/components/preview/*.js',
 					],
 				}
 			}

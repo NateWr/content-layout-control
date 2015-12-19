@@ -1,151 +1,113 @@
 ( function( $ ) {
+
+	var clc = wp.customize.ContentLayoutControl || {};
+
 	/**
-	 * Namespace for base controls, models, collections and views used by the
-	 * Content Layout control. Individual component models and views are defined
-	 * separately in /components.
+	 * Views
 	 *
 	 * @since 0.1
 	 */
-	var clc = wp.customize.ContentLayoutControl = {};
+	clc.Views = clc.Views || {};
 
 	/**
-	 * Define models
+	 * Base view for component layouts
 	 *
-	 * Each component should have a corresponding model that extends the
-	 * Component model.
+	 * These aren't traditional Backbone Views. They'll just fetch and
+	 * inject HTML from the server. Using Views allows us to take advantage
+	 * of Backbone's cleanup of listeners and provides a consistent way to
+	 * tie listeners to the dom element.
 	 *
+	 * @augments wp.Backbone.View
 	 * @since 0.1
 	 */
-	clc.Models = {
-		/**
-		* Base component model
-		*
-		* @augments Backbone.Model
-		* @since 0.1
-		*/
-		Component: Backbone.Model.extend({
-			defaults: {
-				id:          0,
-				name:        '',
-				description: '',
-				type:        '',
-			}
-		}),
+	clc.Views.BaseComponentPreview = wp.Backbone.View.extend({
+		template: null, // doesn't use template. injects HTML passed from the server
+
+		events: {
+			'click .clc-edit-component': 'editComponent',
+		},
 
 		/**
-		 * Hash of component models
+		 * Initialize
 		 *
 		 * @since 0.1
 		 */
-		component_models: {}
-	};
+		initialize: function( options ) {
+			this.listenTo( this.model, 'change', this.load );
+		},
 
-	/**
-	 * Define views
-	 *
-	 * @since 0.1
-	 */
-	clc.Views = {
 		/**
-		 * Base view for component layouts
+		 * Load HTML and insert into the DOM
 		 *
-		 * These aren't traditional Backbone Views. They'll just fetch and
-		 * inject HTML from the server. Using Views allows us to take advantage
-		 * of Backbone's cleanup of listeners and provides a consistent way to
-		 * tie listeners to the dom element.
-		 *
-		 * @augments wp.Backbone.View
 		 * @since 0.1
 		 */
-		BaseComponentLayout: wp.Backbone.View.extend({
-			template: null, // doesn't use template. injects HTML passed from the server
+		load: function() {
+			this.fetchHTML();
+		},
 
-			events: {
-				'click .clc-edit-component': 'editComponent',
-			},
+		/**
+		 * Fetch HTML from the server for the attached model
+		 *
+		 * @since 0.1
+		 */
+		fetchHTML: function() {
+			this.$el.addClass( 'clc-loading' );
+			$.ajax({
+				url: CLC_Preview_Settings.root + '/content-layout-control/v1/render-components',
+				type: 'POST',
+				beforeSend: function( xhr ) {
+					xhr.setRequestHeader( 'X-WP-Nonce', CLC_Preview_Settings.nonce );
+				},
+				data: this.model.attributes,
+				complete: _.bind( this.handleResponse, this )
+			});
+		},
 
-			/**
-			 * Initialize
-			 *
-			 * @since 0.1
-			 */
-			initialize: function( options ) {
-				this.listenTo( this.model, 'change', this.load );
-			},
-
-			/**
-			 * Load HTML and insert into the DOM
-			 *
-			 * @since 0.1
-			 */
-			load: function() {
-				this.fetchHTML();
-			},
-
-			/**
-			 * Fetch HTML from the server for the attached model
-			 *
-			 * @since 0.1
-			 */
-			fetchHTML: function() {
-				this.$el.addClass( 'clc-loading' );
-				$.ajax({
-					url: CLC_Preview_Settings.root + '/content-layout-control/v1/render-components',
-					type: 'POST',
-					beforeSend: function( xhr ) {
-						xhr.setRequestHeader( 'X-WP-Nonce', CLC_Preview_Settings.nonce );
-					},
-					data: this.model.attributes,
-					complete: _.bind( this.handleResponse, this )
-				});
-			},
-
-			/**
-			 * Handle ajax response
-			 *
-			 * @since 0.1
-			 */
-			handleResponse: function( r ) {
-				var html = '';
-				if ( typeof r.success !== 'undefined' && r.success && typeof r.responseJSON !== 'undefined' ) {
-					html = r.responseJSON;
-				}
-
-				this.$el.removeClass( 'clc-loading' );
-				this.injectHTML( html );
-			},
-
-			/**
-			 * Inject HTML into the dom
-			 *
-			 * @since 0.1
-			 */
-			injectHTML: function( html ) {
-				html += '<a href="#" class="clc-edit-component">' + CLC_Preview_Settings.i18n.edit_component + '</a>';
-				this.$el.html( html );
-			},
-
-			/**
-			 * Open the control and the component attached to this layout
-			 *
-			 * @since 0.1
-			 */
-			editComponent: function( event ) {
-				event.preventDefault();
-				event.stopPropagation();
-
-				wp.customize.preview.send( 'edit-component.clc', this.model.get( 'id' ) );
+		/**
+		 * Handle ajax response
+		 *
+		 * @since 0.1
+		 */
+		handleResponse: function( r ) {
+			var html = '';
+			if ( typeof r.success !== 'undefined' && r.success && typeof r.responseJSON !== 'undefined' ) {
+				html = r.responseJSON;
 			}
 
-		}),
+			this.$el.removeClass( 'clc-loading' );
+			this.injectHTML( html );
+		},
 
 		/**
-		 * Hash of component layout views
+		 * Inject HTML into the dom
 		 *
 		 * @since 0.1
 		 */
-		component_views: {}
-	};
+		injectHTML: function( html ) {
+			html += '<a href="#" class="clc-edit-component">' + CLC_Preview_Settings.i18n.edit_component + '</a>';
+			this.$el.html( html );
+		},
+
+		/**
+		 * Open the control and the component attached to this layout
+		 *
+		 * @since 0.1
+		 */
+		editComponent: function( event ) {
+			event.preventDefault();
+			event.stopPropagation();
+
+			wp.customize.preview.send( 'edit-component.clc', this.model.get( 'id' ) );
+		}
+
+	});
+
+	/**
+	 * Hash of component layout views
+	 *
+	 * @since 0.1
+	 */
+	clc.Views.component_previews = {};
 
 	/**
 	 * Handler for the live preview
@@ -217,12 +179,12 @@
 		 */
 		add: function( component ) {
 
-			if ( typeof clc.Views.component_views[component.type] === 'undefined' ) {
+			if ( typeof clc.Views.component_previews[component.type] === 'undefined' ) {
 				return;
 			}
 
 			$( '#content-layout-control' ).append( '<div id="content-layout-control-' + component.id + '" class="clc-component-layout clc-component-' + component.type + '"></div>' );
-			this.views[component.id] = new clc.Views.component_views[component.type]( {
+			this.views[component.id] = new clc.Views.component_previews[component.type]( {
 				el: '#content-layout-control-' + component.id,
 				model: new Backbone.Model( component )
 			} );
