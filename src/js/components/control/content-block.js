@@ -223,6 +223,16 @@
 		},
 
 		/**
+		 * Create a new link panel and store a reference to the view
+		 *
+		 * @since 0.1
+		 */
+		createLinkPanelView: function() {
+			this.link_panel_view = this.control.createLinkPanelView();
+			return this.link_panel_view;
+		},
+
+		/**
 		 * Open or close the link panel
 		 *
 		 * @since 0.1
@@ -244,7 +254,7 @@
 		 * @since 0.1
 		 */
 		openLinkPanel: function() {
-			clc.secondary_panel.trigger( 'load-secondary-panel.clc', clc.link_panel_view, this );
+			clc.secondary_panel.trigger( 'load-secondary-panel.clc', this.createLinkPanelView(), this );
 			this.$el.addClass( 'clc-links-panel-open' );
 		},
 
@@ -263,7 +273,7 @@
 		 * @since 0.1
 		 */
 		secondaryPanelClosed: function( view ) {
-			if ( view.cid === clc.link_panel_view.cid ) {
+			if ( view.cid === this.link_panel_view.cid ) {
 				this.$el.removeClass( 'clc-links-panel-open' );
 				this.$el.find( '.add-link' ).focus();
 			}

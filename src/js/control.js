@@ -91,22 +91,16 @@
 
 			$( 'body' ).addClass( 'clc-secondary-open' );
 
-			// View hasn't changed
-			if ( typeof this.view !== 'undefined' && this.view.cid === view.cid ) {
-				this.view.render();
-				return;
-			}
-
-			// Clean up existing view
-			if ( typeof this.view !== 'undefined' ) {
+			// Broadcast the close event for the previous view
+			if ( this.views.first( '.clc-secondary-content' ) ) {
 				this.sendClose();
-				this.view.remove(); // Cleanup listeners
 			}
 
-			// Load the new view
-			this.view = view;
-			this.view.render();
-			this.$el.find( '.clc-secondary-content' ).html( this.view.el )
+			// Update the view
+			this.views.set( '.clc-secondary-content', view );
+
+			// Update focus
+			this.views.first( '.clc-secondary-content' ).$el
 				.find( 'label, input, textarea, select, a, button' ).first().focus();
 
 			// Update component
@@ -114,6 +108,7 @@
 			if ( typeof component !== 'undefined' ) {
 				this.component = component;
 			}
+
 		},
 
 		/**
@@ -148,7 +143,7 @@
 		 * @since 0.1
 		 */
 		sendClose: function() {
-			this.send( 'secondary-panel-closed.clc', this.view );
+			this.send( 'secondary-panel-closed.clc', this.views.first( '.clc-secondary-content' ) );
 		}
 	});
 
@@ -478,13 +473,6 @@
 				}
 			}
 
-			// Initialize the component selection list view
-			clc.component_list_view = new clc.Views.ComponentList({
-				className: 'clc-component-list',
-				collection: control.allowed_components,
-				control: control
-			});
-
 			// Generate an (empty) collection of components added to this control
 			control.added_components = new clc.Collections.Added( [], { control: control } );
 			control.added_components_view = new clc.Views.AddedList({
@@ -494,13 +482,8 @@
 			});
 			control.added_components_view.render();
 
-			// Initialize the link panel
-			clc.link_panel_view = new clc.Views.LinkPanel({
-				collection: new Backbone.Collection(),
-			});
-
 			// Register events
-			_.bindAll( control, 'toggleComponentPanel', 'openComponentPanel', 'closeComponentPanel', 'secondaryPanelClosed', 'addComponent', 'updateSetting', 'onPageRefresh', 'focusComponent' );
+			_.bindAll( control, 'createComponentListView', 'createLinkPanelView', 'toggleComponentPanel', 'openComponentPanel', 'closeComponentPanel', 'secondaryPanelClosed', 'addComponent', 'updateSetting', 'onPageRefresh', 'focusComponent' );
 			control.container.on( 'click', '.add-component', control.toggleComponentPanel );
 			control.container.on( 'secondary-panel-closed.clc', control.secondaryPanelClosed );
 			wp.customize.previewer.bind( 'previewer-reset.clc', control.onPageRefresh );
@@ -530,6 +513,33 @@
 		},
 
 		/**
+		 * Create the component list view and store reference
+		 *
+		 * @since 0.1
+		 */
+		createComponentListView: function() {
+			this.component_list_view = new clc.Views.ComponentList({
+				className: 'clc-component-list',
+				collection: this.allowed_components,
+				control: this
+			});
+			return this.component_list_view;
+		},
+
+		/**
+		 * Create a a new link panel view
+		 *
+		 * Reference to the view should be stored in the component's control
+		 *
+		 * @since 0.1
+		 */
+		createLinkPanelView: function() {
+			return new clc.Views.LinkPanel({
+				collection: new Backbone.Collection(),
+			});
+		},
+
+		/**
 		 * Assign the appropriate collection and open or close the list
 		 *
 		 * @since 0.1
@@ -550,7 +560,7 @@
 		 * @since 0.1
 		 */
 		openComponentPanel: function() {
-			clc.secondary_panel.trigger( 'load-secondary-panel.clc', clc.component_list_view );
+			clc.secondary_panel.trigger( 'load-secondary-panel.clc', this.createComponentListView() );
 			$( '#customize-control-' + this.id ).addClass( 'clc-component-list-open' );
 		},
 
@@ -569,7 +579,7 @@
 		 * @since 0.1
 		 */
 		secondaryPanelClosed: function( event, view ) {
-			if ( view.cid === clc.component_list_view.cid ) {
+			if ( typeof this.component_list_view !== 'undefined' && view.cid === this.component_list_view.cid ) {
 				$( '#customize-control-' + this.id ).removeClass( 'clc-component-list-open' );
 			}
 		},
