@@ -1,0 +1,69 @@
+/**
+ * Secondary panel for selecting a post
+ *
+ * @since 0.1
+ */
+.clc-post-selection-search {
+
+	label {
+		position: relative;
+		display: block;
+		padding: @base;
+	}
+
+	.customize-control-title {
+		margin-bottom: 0;
+	}
+
+	input {
+		width: 85%;
+	}
+
+	.clc-spinner {
+		&:extend(.clc-spinner);
+		position: absolute;
+		bottom: 14px;
+		right: @base;
+	}
+}
+
+&.fetching .clc-spinner {
+	visibility: visible;
+}
+
+// Search results
+.clc-results-list {
+	margin: 0;
+	border-top: @border;
+
+	li {
+		margin: 0;
+	}
+
+	a {
+		display: block;
+		padding: @base;
+		border-bottom: @border;
+		color: @text;
+		text-decoration: none;
+
+		&:hover,
+		&:focus {
+			background: @shade;
+		}
+	}
+
+	h4 {
+		margin: 0;
+		font-size: 14px;
+		line-height: @double;
+		overflow-x: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+
+	.description {
+		font-size: 12px;
+		color: #777;
+	}
+}

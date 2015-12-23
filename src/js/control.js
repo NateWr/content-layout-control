@@ -527,6 +527,23 @@
 		},
 
 		/**
+		 * Create a a new post panel view
+		 *
+		 * Reference to the view should be stored in the component's control
+		 *
+		 * @since 0.1
+		 */
+		createPostPanelView: function( options ) {
+			var opt = _.extend(
+				options,
+				{
+					collection: new Backbone.Collection(),
+				}
+			);
+			return new clc.Views.PostPanel( opt );
+		},
+
+		/**
 		 * Create a a new link panel view
 		 *
 		 * Reference to the view should be stored in the component's control

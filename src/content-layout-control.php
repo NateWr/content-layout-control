@@ -295,6 +295,16 @@ if ( !class_exists( 'CLC_Content_Layout_Control' ) ) {
 				)
 			);
 
+			register_rest_route(
+				'content-layout-control/v1',
+				'/posts/',
+				array(
+					'methods'   => 'POST',
+					'callback' => array( $this, 'api_get_posts' ),
+					'permission_callback' => array( $this, 'current_user_can' ),
+				)
+			);
+
 			$this->_load_components();
 			foreach( $this->components as $component ) {
 				$component->register_endpoints();
@@ -322,6 +332,109 @@ if ( !class_exists( 'CLC_Content_Layout_Control' ) ) {
 			$component->render_layout();
 			return ob_get_clean();
 		}
+
+		/**
+		 * Retrieve a list of posts matching a search query or a single post by
+		 * ID
+		 *
+		 * @since 0.1
+		 */
+		public function api_get_posts( WP_REST_Request $request ) {
+			$params = stripslashes_deep( $request->get_body_params() );
+
+			if ( !isset( $params['s'] ) && !isset( $params['ID'] ) ) {
+				return array();
+			}
+
+			if ( !isset( $params['return'] ) ) {
+				$params['return'] = array(
+					'ID'       => 'ID',
+					'title'    => 'title',
+					'description' => 'post_type_label',
+				);
+			}
+
+			$args = array(
+				'posts_per_page' => 50,
+			);
+
+			if ( isset( $params['s'] ) ) {
+				$args['s'] = sanitize_text_field( $params['s'] );
+			}
+
+			if ( isset( $params['ID'] ) ) {
+				$args['post__in'] = is_array( $params['ID'] ) ? array_map( 'absint', $params['ID'] ) : array( absint( $params['ID'] ) );
+			}
+
+			if ( isset( $params['post_type'] ) ) {
+				$args['post_type'] = is_array( $params['post_type'] ) ? array_map( 'sanitize_text_field', $params['post_type'] ) : sanitize_text_field( $params['post_type'] );
+			}
+
+			if ( isset( $params['posts_per_page'] ) ) {
+				$args['posts_per_page'] = absint( $params['posts_per_page'] );
+			}
+
+			$query = new WP_Query( $args );
+
+			$posts = array();
+			while ( $query->have_posts() ) {
+				$query->the_post();
+
+				$match = array();
+				foreach( $params['return'] as $key => $type ) {
+					$match[$key] = $this->api_get_posts_post_data( $type );
+				}
+				$posts[] = $match;
+			}
+
+			if ( isset( $params['s'] ) ) {
+				return array(
+					's'     => $params['s'],
+					'posts' => $posts,
+				);
+			} elseif ( isset( $params['ID'] ) ) {
+				return array(
+					'ID'    => $params['ID'],
+					'posts' => empty( $posts ) ? array() : $posts[0],
+				);
+			}
+
+			return array();
+		}
+
+		/**
+		 * Return a requested value for the post's api endpoint
+		 *
+		 * @TODO In the future it will probably be better just to use the REST
+		 *  API's posts endpoint, which has a schema and fields system for
+		 *  deciding what data to return to an endpoint.
+		 * @since 0.1
+		 */
+		public function api_get_posts_post_data( $type ) {
+			switch( $type ) {
+				case 'ID':
+					return get_the_ID();
+				case 'permalink':
+					return get_the_permalink();
+				case 'title':
+					return get_the_title();
+				case 'date':
+					return get_the_date();
+				case 'excerpt':
+					return get_the_excerpt();
+				case 'content':
+					return get_the_content();
+				case 'post_type':
+					return get_post_type( get_the_ID() );
+				case 'post_type_label':
+					$post_type = get_post_type_object( get_post_type() );
+					return $post_type->labels->singular_name;
+				default:
+					return apply_filters( 'clc_get_posts_post_data', $type );
+			}
+		}
+
+
 	}
 }
 

@@ -1,0 +1,97 @@
+/**
+ * Post component control styles for the WordPress Customizer
+ *
+ * @since 0.1
+ */
+.clc-component-posts {
+
+	.post-list {
+
+		.loading {
+			position: relative;
+			display: block;
+			height: 28px;
+			background: rgba(0,0,0,0.15);
+
+			&:after {
+				content: '';
+				display: block;
+				position: absolute;
+				top: 4px;
+				left: 50%;
+				width: 12px;
+				height: 12px;
+				margin-left: -6px;
+				.animation( clc_spin 1s linear infinite );
+				border-radius: 100%;
+				border-top: 4px solid @text;
+				border-bottom: 4px solid transparent;
+				border-left: 4px solid @text;
+				border-right: 4px solid transparent;
+				background: rgba(255,255,255,0.5);
+			}
+		}
+
+		> li {
+			position: relative;
+			margin-bottom: @base;
+			padding: @half (@double * 2) @half @base;
+			border: @border;
+			border-left-width: 4px;
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+		}
+
+		.remove-post {
+			position: absolute;
+			top: 0;
+			right: 0;
+			width: @double + @base;
+			height: @double + @base;
+			border-left: @border;
+			line-height: @double;
+			text-align: center;
+			color: red;
+			overflow: hidden;
+
+			&:before {
+				content: '\f335';
+				display: block;
+				width: @double + @base;
+				height: @double + @base;
+				font: normal 20px/1 'dashicons';
+				line-height: @double + @base;
+				speak: none;
+				position: relative;
+				vertical-align: middle;
+				-webkit-font-smoothing: antialiased;
+				-moz-osx-font-smoothing: grayscale;
+			}
+
+			&:hover,
+			&:focus {
+				background: red;
+				color: #fff;
+			}
+		}
+	}
+
+	.buttons {
+		margin-top: @base;
+	}
+
+	.add-post {
+
+		&:before {
+			&:extend(.clc-dashicon);
+			content: '\f109';
+			transition: transform 0.2s;
+		}
+	}
+
+    &.clc-posts-panel-open .add-post:before {
+    	content: '\f132';
+        .transform( rotate(45deg) );
+    }
+}

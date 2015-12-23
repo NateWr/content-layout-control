@@ -63,3 +63,25 @@
 	border-left: @size solid @color;
 	border-right: @size solid transparent;
 }
+
+// Spinner
+.clc-spinner {
+	display: inline-block;
+	width: 16px;
+	height: 16px;
+	.halfcircle( 2px, @text );
+	.animation( clc_spin 0.7s linear infinite );
+	visibility: hidden;
+	opacity: 0.5;
+}
+
+// Dashicon
+.clc-dashicon {
+	display: inline-block;
+	font: normal 20px/1 'dashicons';
+	speak: none;
+	position: relative;
+	vertical-align: middle;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}

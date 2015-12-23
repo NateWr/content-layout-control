@@ -156,7 +156,7 @@ if ( !class_exists( 'CLC_WP_Customize_Content_Layout_Control' ) ) {
 		public function enqueue_preview_assets() {
 
 			// Load core preview styles
-			wp_enqueue_style( 'content-layout-control', CLC_Content_Layout_Control::$url . '/css/content-layout-control.css', '0.1' );
+			wp_enqueue_style( 'content-layout-preview', CLC_Content_Layout_Control::$url . '/css/content-layout-preview.css', '0.1' );
 
 			// Load required control, model and view classes
 			wp_enqueue_script( 'content-layout-preview-js', CLC_Content_Layout_Control::$url  . '/js/content-layout-preview.js', array( 'wp-backbone', 'customize-preview' ), '0.1', true );
@@ -216,6 +216,8 @@ if ( !class_exists( 'CLC_WP_Customize_Content_Layout_Control' ) ) {
 			?>
 			<script type="text/html" id="tmpl-clc-secondary-panel"><?php include( $clc::$dir . '/js/templates/secondary-panel.js' ); ?></script>
 			<script type="text/html" id="tmpl-clc-component-summary"><?php include( $clc::$dir . '/js/templates/component-summary.js' ); ?></script>
+			<script type="text/html" id="tmpl-clc-secondary-panel-post-selection"><?php include( $clc::$dir . '/js/templates/secondary-panel-post-selection.js' ); ?></script>
+			<script type="text/html" id="tmpl-clc-secondary-panel-post-summary"><?php include( $clc::$dir . '/js/templates/secondary-panel-post-summary.js' ); ?></script>
 			<script type="text/html" id="tmpl-clc-secondary-panel-link-selection"><?php include( $clc::$dir . '/js/templates/secondary-panel-link-selection.js' ); ?></script>
 			<script type="text/html" id="tmpl-clc-secondary-panel-link-summary"><?php include( $clc::$dir . '/js/templates/secondary-panel-link-summary.js' ); ?></script>
 			<?php

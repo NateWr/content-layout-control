@@ -9,6 +9,23 @@
 	var clc = wp.customize.ContentLayoutControl = {};
 
 	/**
+	 * Define common functions
+	 *
+	 * @since 0.1
+	 */
+	clc.Functions = {
+
+		/**
+		 * Add a nonce to the request headers in ajax requests
+		 *
+		 * @since 0.1
+		 */
+		getRequestHeader: function( xhr ) {
+			xhr.setRequestHeader( 'X-WP-Nonce', CLC_Control_Settings.nonce );
+		}
+	};
+
+	/**
 	 * Define models
 	 *
 	 * Each component should have a corresponding model that extends the

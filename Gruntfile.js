@@ -17,11 +17,8 @@ module.exports = function(grunt) {
 					ieCompat: true
 				},
 				files: {
-					'dist/css/content-layout-control.css': [
-						'src/less/control.less',
-						'src/less/components/content-block.less',
-						'src/less/preview.less',
-					],
+					'dist/css/content-layout-control.css': 'src/less/control.less',
+					'dist/css/content-layout-preview.css': 'src/less/preview.less',
 				}
 			}
 		},
@@ -44,6 +41,7 @@ module.exports = function(grunt) {
 					'dist/js/content-layout-control.js': [
 						'src/js/content-layout-control.js',
 						'src/js/control.js',
+						'src/js/control-post-panel.js',
 						'src/js/control-link-panel.js',
 						'src/js/components/model/*.js',
 						'src/js/components/control/*.js',
