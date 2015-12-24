@@ -686,7 +686,8 @@
 				// @TODO situations like this should alert the user and try to
 				//  handle old data gracefully.
 				if ( this.allowed_components.findWhere({ type: components[i].type }) ) {
-					var atts = _.extend( clc_components[components[i].type], components[i] );
+					var atts = _.clone( clc_components[components[i].type] );
+					atts = _.extend( atts, components[i] );
 					models.push( new clc.Models.components[components[i].type]( atts ) );
 				}
 			}
