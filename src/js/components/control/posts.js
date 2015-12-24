@@ -43,13 +43,8 @@
 		 *
 		 * @since 0.1
 		 */
-		getSearchArgs: function( options ) {
-			return _.extend(
-				{
-					post_type: 'any',
-				},
-				options
-			);
+		getSearchArgs: function( search_args ) {
+			return { post_type: this.model.get( 'post_types' ) };
 		},
 
 		/**
@@ -58,7 +53,7 @@
 		 * @since 0.1
 		 */
 		createPostPanelView: function( options ) {
-			this.post_panel_view = this.control.createPostPanelView( this.getSearchArgs() );
+			this.post_panel_view = this.control.createPostPanelView( { search_args: this.getSearchArgs() } );
 			return this.post_panel_view;
 		},
 

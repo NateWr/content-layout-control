@@ -31,6 +31,13 @@ if ( !class_exists( 'CLC_Component_Posts' ) ) {
 		public $limit_posts = 0;
 
 		/**
+		 * Post types to allow
+		 *
+		 * @since 0.1
+		 */
+		public $post_types = 'any';
+
+		/**
 		 * Settings expected by this component
 		 *
 		 * @param array Setting keys
@@ -47,6 +54,7 @@ if ( !class_exists( 'CLC_Component_Posts' ) ) {
 
 			$atts = parent::get_attributes();
 			$atts['limit_posts'] = $this->limit_posts;
+			$atts['post_types'] = $this->post_types;
 
 			return $atts;
 		}
