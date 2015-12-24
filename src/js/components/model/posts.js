@@ -15,6 +15,7 @@
 			type:           'posts',
 			title:          '',
 			posts:          [],
+			limit_posts:    0,
 			order:          0
 		}
 	});

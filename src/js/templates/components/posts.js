@@ -10,6 +10,7 @@
 		<# if ( data.model.get( 'posts' ).length ) { #>
 			<ul class="post-list">
 				<# for ( var i in data.model.get( 'posts' ) ) { #>
+					<# if ( data.model.get( 'limit_posts' ) > 0 && i >= data.model.get( 'limit_posts' ) ) { break; } #>
 					<li>
 						<# if ( typeof data.model.get( 'posts' )[i].title === 'undefined' ) { #>
 							<div class="loading">
@@ -32,7 +33,7 @@
 			</div>
 		<# } #>
 		<div class="buttons">
-			<button class="add-post button-secondary">
+			<button class="add-post button-secondary" <# if ( data.model.get( 'limit_posts' ) === 0 || data.model.get( 'limit_posts' ) <= data.model.get( 'posts' ).length ) { #>disabled="disabled"<# } #>>
 				<?php echo $this->i18n['posts_add_button']; ?>
 			</button>
 		</div>

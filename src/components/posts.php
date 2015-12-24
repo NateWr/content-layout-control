@@ -16,12 +16,19 @@ if ( !class_exists( 'CLC_Component_Posts' ) ) {
 		public $type = 'posts';
 
 		/**
-		 * Psts to display
+		 * Posts to display
 		 *
 		 * @param array List of post ids
 		 * @since 0.1
 		 */
 		public $posts = array();
+
+		/**
+		 * Limit number of posts allowed (0 = unlimited)
+		 *
+		 * @since 0.1
+		 */
+		public $limit_posts = 0;
 
 		/**
 		 * Settings expected by this component
@@ -30,6 +37,19 @@ if ( !class_exists( 'CLC_Component_Posts' ) ) {
 		 * @since 0.1
 		 */
 		public $settings = array( 'posts' );
+
+		/**
+		 * Get attribute hash
+		 *
+		 * @since 0.1
+		 */
+		public function get_attributes() {
+
+			$atts = parent::get_attributes();
+			$atts['limit_posts'] = $this->limit_posts;
+
+			return $atts;
+		}
 
 		/**
 		 * Sanitize settings
@@ -42,10 +62,27 @@ if ( !class_exists( 'CLC_Component_Posts' ) ) {
 
 			return array(
 				'id'             => isset( $val['id'] ) ? absint( $val['id'] ) : 0,
-				'posts'          => isset( $val['posts'] ) ? array_map( array( $this, 'sanitize_post' ), $val['posts'] ) : $this->posts,
+				'posts'          => isset( $val['posts'] ) ? $this->sanitize_posts( $val['posts'] ) : $this->posts,
 				'order'          => isset( $val['order'] ) ? absint( $val['order'] ) : 0,
 				'type'           => $this->type, // Don't allow this to be modified
 			);
+		}
+
+		/**
+		 * Sanitize posts array
+		 *
+		 * @since 0.1
+		 */
+		public function sanitize_posts( $posts ) {
+			if ( !is_array( $posts ) ) {
+				return $this->posts;
+			}
+
+			if ( $this->limit_posts ) {
+				$posts = array_slice( $posts, 0, $this->limit_posts );
+			}
+
+			return array_map( array( $this, 'sanitize_post' ), $posts );
 		}
 
 		/**
