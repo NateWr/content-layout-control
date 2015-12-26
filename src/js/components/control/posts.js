@@ -33,7 +33,7 @@
 			this.listenTo(this, 'post-panel-add-post.clc', this.addPost );
 			this.listenTo(this, 'secondary-panel-closed.clc', this.secondaryPanelClosed );
 
-			if ( this.model.get( 'posts' ).length ) {
+			if ( this.model.get( 'items' ).length ) {
 				this.fetchPostDetails();
 			}
 		},
@@ -110,8 +110,9 @@
 		 * @since 0.1
 		 */
 		addPost: function( post ) {
-			this.model.get( 'posts' ).push( post );
+			this.model.get( 'items' ).push( post );
 			this.control.updateSetting();
+			this.model.trigger( 'change', this.model );
 			this.render();
 		},
 
@@ -121,8 +122,9 @@
 		 * @since 0.1
 		 */
 		removePost: function( event ) {
-			this.model.get( 'posts' ).splice( $( event.target ).data( 'index' ), 1 );
+			this.model.get( 'items' ).splice( $( event.target ).data( 'index' ), 1 );
 			this.control.updateSetting();
+			this.model.trigger( 'change', this.model );
 			this.render();
 		},
 
@@ -136,11 +138,12 @@
 		 */
 		fetchPostDetails: function() {
 
-			for( var i in this.model.get( 'posts' ) ) {
+			for( var i in this.model.get( 'items' ) ) {
+				var data = _.extend( this.getSearchArgs(), { ID: this.model.get( 'items' )[i].ID } );
 				$.ajax({
 					url: CLC_Control_Settings.root + '/content-layout-control/v1/posts/',
 					type: 'POST',
-					data: _.extend( this.getSearchArgs(), { ID: this.model.get( 'posts' )[i] } ),
+					data: data,
 					beforeSend: clc.Functions.getRequestHeader,
 					complete: _.bind( this.fetchPostDetailsResponse, this )
 				});
@@ -162,12 +165,15 @@
 				return;
 			}
 
-			for ( var i in this.model.get( 'posts' ) ) {
-				if ( this.model.get( 'posts' )[i] == data.ID ) {
-					this.model.get( 'posts' )[i] = data.posts;
+			var posts = this.model.get( 'items' );
+			for ( var i in posts ) {
+				if ( posts[i].ID == data.ID ) {
+					posts[i] = data.posts;
 					break;
 				}
 			}
+
+			this.model.set( { items: posts } );
 
 			this.render();
 		},

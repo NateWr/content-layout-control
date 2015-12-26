@@ -7,19 +7,19 @@
 </div>
 <div class="control">
 	<div class="setting">
-		<# if ( data.model.get( 'posts' ).length ) { #>
+		<# if ( data.model.get( 'items' ).length ) { #>
 			<ul class="post-list">
-				<# for ( var i in data.model.get( 'posts' ) ) { #>
+				<# for ( var i in data.model.get( 'items' ) ) { #>
 					<# if ( data.model.get( 'limit_posts' ) > 0 && i >= data.model.get( 'limit_posts' ) ) { break; } #>
 					<li>
-						<# if ( typeof data.model.get( 'posts' )[i].title === 'undefined' ) { #>
+						<# if ( typeof data.model.get( 'items' )[i].title === 'undefined' ) { #>
 							<div class="loading">
 								<span class="screen-reader-text">
 									<?php echo $this->i18n['posts_loading']; ?>
 								</span>
 							</div>
 						<# } else { #>
-							{{ data.model.get( 'posts' )[i].title }}
+							{{ data.model.get( 'items' )[i].title }}
 							<a href="#" class="remove-post" data-index="{{ i }}">
 								<?php echo $this->i18n['posts_remove_button']; ?>
 							</a>
@@ -33,7 +33,7 @@
 			</div>
 		<# } #>
 		<div class="buttons">
-			<button class="add-post button-secondary" <# if ( data.model.get( 'limit_posts' ) === 0 || data.model.get( 'limit_posts' ) <= data.model.get( 'posts' ).length ) { #>disabled="disabled"<# } #>>
+			<button class="add-post button-secondary" <# if ( data.model.get( 'limit_posts' ) === 0 || data.model.get( 'limit_posts' ) <= data.model.get( 'items' ).length ) { #>disabled="disabled"<# } #>>
 				<?php echo $this->i18n['posts_add_button']; ?>
 			</button>
 		</div>

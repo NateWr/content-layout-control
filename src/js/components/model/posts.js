@@ -14,7 +14,7 @@
 			description:    '',
 			type:           'posts',
 			title:          '',
-			posts:          [],
+			items:          [],
 			limit_posts:    0,
 			post_types:     'any',
 			order:          0

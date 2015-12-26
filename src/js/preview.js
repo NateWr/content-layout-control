@@ -201,7 +201,12 @@
 				return;
 			}
 
-			this.views[component.id].model.set( component );
+			// Trigger the change event manually. This ensures the component
+			// will be refreshed even if Backbone can't detect an attribute
+			// change. This happens with attributes that are objects or arrays.
+			// Backbone doesn't check for changes recursively.
+			this.views[component.id].model.set( component, { silent: true } );
+			this.views[component.id].model.trigger( 'change', this.views[component.id].model );
 		},
 
 		/**

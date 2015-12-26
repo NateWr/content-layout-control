@@ -21,7 +21,7 @@ if ( !class_exists( 'CLC_Component_Posts' ) ) {
 		 * @param array List of post ids
 		 * @since 0.1
 		 */
-		public $posts = array();
+		public $items = array();
 
 		/**
 		 * Limit number of posts allowed (0 = unlimited)
@@ -43,7 +43,7 @@ if ( !class_exists( 'CLC_Component_Posts' ) ) {
 		 * @param array Setting keys
 		 * @since 0.1
 		 */
-		public $settings = array( 'posts' );
+		public $settings = array( 'items' );
 
 		/**
 		 * Get attribute hash
@@ -70,36 +70,36 @@ if ( !class_exists( 'CLC_Component_Posts' ) ) {
 
 			return array(
 				'id'             => isset( $val['id'] ) ? absint( $val['id'] ) : 0,
-				'posts'          => isset( $val['posts'] ) ? $this->sanitize_posts( $val['posts'] ) : $this->posts,
+				'items'          => isset( $val['items'] ) ? $this->sanitize_items( $val['items'] ) : $this->items,
 				'order'          => isset( $val['order'] ) ? absint( $val['order'] ) : 0,
 				'type'           => $this->type, // Don't allow this to be modified
 			);
 		}
 
 		/**
-		 * Sanitize posts array
+		 * Sanitize items array
 		 *
 		 * @since 0.1
 		 */
-		public function sanitize_posts( $posts ) {
-			if ( !is_array( $posts ) ) {
-				return $this->posts;
+		public function sanitize_items( $items ) {
+			if ( !is_array( $items ) ) {
+				return $this->items;
 			}
 
 			if ( $this->limit_posts ) {
-				$posts = array_slice( $posts, 0, $this->limit_posts );
+				$items = array_slice( $items, 0, $this->limit_posts );
 			}
 
-			return array_map( array( $this, 'sanitize_post' ), $posts );
+			return array_map( array( $this, 'sanitize_item' ), $items );
 		}
 
 		/**
-		 * Pluck and sanitize post data
+		 * Pluck and sanitize item data
 		 *
 		 * @since 0.1
 		 */
-		public function sanitize_post( $post ) {
-			return isset( $post['ID'] ) ? absint( $post['ID'] ) : 0;
+		public function sanitize_item( $item ) {
+			return array( 'ID' => isset( $item['ID'] ) ? absint( $item['ID'] ) : 0 );
 		}
 
 
