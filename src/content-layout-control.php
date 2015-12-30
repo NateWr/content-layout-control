@@ -330,7 +330,7 @@ if ( !class_exists( 'CLC_Content_Layout_Control' ) ) {
 
 			ob_start();
 			$component->render_layout();
-			return ob_get_clean();
+			return do_shortcode( ob_get_clean() );
 		}
 
 		/**
