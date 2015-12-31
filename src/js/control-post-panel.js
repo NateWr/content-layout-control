@@ -5,7 +5,6 @@
 	/**
 	 * Re-usable panel for searching and selecting posts
 	 *
-	 * @option component The component view which opened the panel
 	 * @option search_args Parameters for post searching
 	 * @augments wp.Backbone.View
 	 * @since 0.1
@@ -20,7 +19,7 @@
 		},
 
 		initialize: function( options ) {
-			_.extend( this, _.pick( options, 'component', 'search_args' ) );
+			_.extend( this, _.pick( options, 'search_args' ) );
 
 			this.state = 'waiting';
 

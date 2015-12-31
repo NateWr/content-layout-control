@@ -63,4 +63,76 @@
 			margin: @base 0;
 		}
 	}
+
+	.link-panel-control {
+
+		.add-link {
+
+			&:before {
+				&:extend(.clc-dashicon);
+				content: '\f103';
+				transition: transform 0.2s;
+			}
+		}
+
+		.buttons {
+			margin-top: @base;
+		}
+	}
+
+	&.clc-links-panel-open  .link-panel-control .add-link:before {
+		content: '\f132';
+		-webkit-transform: rotate(45deg);
+		-ms-transform: rotate(45deg);
+		transform: rotate(45deg);
+	}
+
+	.link-panel-control-links {
+
+		> li {
+			&:extend(.clc-list-item);
+		}
+
+		.link {
+			display: block;
+			white-space: nowrap;
+			overflow-x: hidden;
+			text-overflow: ellipsis;
+
+			&:hover,
+			&:focus {
+
+				&:after {
+					@content_block_links_box: @double + @base - 2;
+					content: '\f504';
+					display: block;
+					position: absolute;
+					top: 0;
+					right: @content_block_links_box;
+					width: @content_block_links_box;
+					height: @content_block_links_box;
+					background: @shade;
+					font-family: 'dashicons';
+					line-height: @double + @base;
+					text-align: center;
+					speak: none;
+					vertical-align: middle;
+					color: #777;
+				}
+			}
+		}
+
+		.remove-link {
+			&:extend(.clc-list-item-remove);
+
+			&:before {
+				&:extend(.clc-list-item-remove:before);
+			}
+
+			&:hover,
+			&:focus {
+				&:extend(.clc-list-item-remove:hover);
+			}
+		}
+	}
 }

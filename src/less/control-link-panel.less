@@ -1,0 +1,65 @@
+/**
+ * Secondary panel for adding a link
+ *
+ * @since 0.1
+ */
+.clc-link-panel {
+
+	.customize-control-title {
+		margin-bottom: 0;
+	}
+
+	&.search-visible {
+
+		.clc-link-panel-search {
+			left: 0;
+		}
+
+		.clc-link-panel-form {
+			left: -100%;
+		}
+	}
+
+	.button-link {
+		line-height: 28px;
+        text-decoration: none;
+	}
+}
+
+.clc-link-panel-form {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	padding: @base;
+	box-sizing: border-box;
+	transition: 0.3s left;
+
+	label {
+		display: block;
+		margin-bottom: @base;
+	}
+
+	input {
+		width: 100%;
+	}
+
+    .add-link {
+        margin-right: 0.5em;
+    }
+}
+
+.clc-link-panel-search {
+	position: absolute;
+	padding: @base;
+	top: 0;
+	left: 100%;
+	width: 100%;
+	transition: 0.3s left;
+	box-sizing: border-box;
+}
+
+.clc-link-panel-search-form {
+    margin-left: -@base;
+    margin-right: -@base;
+}

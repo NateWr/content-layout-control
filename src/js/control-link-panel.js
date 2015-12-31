@@ -16,7 +16,6 @@
 		className: 'clc-link-panel',
 
 		events: {
-			'keyup .clc-link-panel-search-input': 'keyupSearch',
 			'keyup .clc-link-panel-url': 'setButtonState',
 			'keyup .clc-link-panel-link-text': 'setButtonState',
 			'click .add-link': 'add',
@@ -27,36 +26,18 @@
 		initialize: function( options ) {
 			// Store reference to component
 			_.extend( this, _.pick( options, 'component' ) );
-			this.state = 'waiting';
-			this.listenTo( this, 'link-panel-select-link.clc', this.updateLink );
+
+			this.views.set( '.clc-link-panel-search-form', new clc.Views.LinkPanelPostSearch({ parent: this, collection: new Backbone.Collection() }) );
 		},
 
 		render: function() {
 			wp.Backbone.View.prototype.render.apply( this );
 
-			this.updateState();
-
-			this.renderCollection();
-
 			this.url = this.$el.find( '.clc-link-panel-url' );
 			this.link_text = this.$el.find( '.clc-link-panel-link-text' );
 			this.add_link = this.$el.find( '.add-link' );
-			this.search_input = this.$el.find( '.clc-link-panel-search-input' );
 
 			this.setButtonState();
-		},
-
-		/**
-		 * Render collection of links
-		 *
-		 * @since 0.1
-		 */
-		renderCollection: function() {
-			var list = this.$el.find( '.clc-link-panel-list' );
-			list.empty();
-			this.collection.each( function( model ) {
-				list.append( new clc.Views.LinkSummary( { model: model, link_panel_view: this } ).render().el );
-			}, this );
 		},
 
 		/**
@@ -67,7 +48,8 @@
 		openSearch: function( event ) {
 			event.preventDefault();
 			this.$el.addClass( 'search-visible' );
-			this.search_input.focus();
+			this.views.first( '.clc-link-panel-search-form' ).$el
+				.find( 'input' ).focus();
 		},
 
 		/**
@@ -81,101 +63,7 @@
 			}
 
 			this.$el.removeClass( 'search-visible' );
-			this.add_link.focus();
-		},
-
-		/**
-		 * Respond to typing in the search field
-		 *
-		 * @since 0.1
-		 */
-		keyupSearch: function( event ) {
-			event.preventDefault();
-
-			var search = this.search_input.val();
-			if ( search.length < 3 ) {
-				this.resetSearch();
-				return;
-			}
-
-			if ( this.search == search ) {
-				return;
-			}
-
-			this.fetchLinks( search );
-		},
-
-		/**
-		 * Reset the currently searched string
-		 *
-		 * @since 0.1
-		 */
-		resetSearch: function() {
-			this.search = '';
-			this.updateLinks([]);
-			this.updateState( 'waiting' );
-		},
-
-		/**
-		 * Fetch a list of links
-		 *
-		 * @since 0.1
-		 */
-		fetchLinks: function( search ) {
-			this.search = search.replace( /\s+/g, '+' );
-			this.updateState( 'fetching' );
-
-			$.ajax({
-				url: CLC_Control_Settings.root + '/content-layout-control/v1/components/content-block/links/' + this.search,
-				type: 'GET',
-				beforeSend: function( xhr ) {
-					xhr.setRequestHeader( 'X-WP-Nonce', CLC_Control_Settings.nonce );
-				},
-				complete: _.bind( this.handleResponse, this )
-			});
-		},
-
-		/**
-		 * Handle response from search query
-		 *
-		 * @since 0.1
-		 */
-		handleResponse: function( response ) {
-			if ( typeof response === 'undefined' || response.status !== 200 ) {
-				return;
-			}
-
-			var data = response.responseJSON;
-			if ( typeof data.search === 'undefined' || data.search != this.search ) {
-				return;
-			}
-
-			this.updateState( 'waiting' );
-			this.updateLinks( data.links );
-		},
-
-		/**
-		 * Update view state
-		 *
-		 * @since 0.1
-		 */
-		updateState: function( state ) {
-			if ( state ) {
-				this.state = state;
-			}
-
-			this.$el.removeClass( 'waiting fetching' );
-			this.$el.addClass( this.state );
-		},
-
-		/**
-		 * Update the collection of links
-		 *
-		 * @since 0.1
-		 */
-		updateLinks: function( links ) {
-			this.collection.reset( links );
-			this.renderCollection();
+			this.$el.add_link.focus();
 		},
 
 		/**
@@ -235,25 +123,48 @@
 	});
 
 	/**
-	 * Link selection view
+	 * Search panel for finding links to existing content
+	 *
+	 * @option parent The link panel view which opened the panel
+	 * @augments clc.Views.PostPanel
+	 * @augments wp.Backbone.View
+	 * @since 0.1
+	 */
+	clc.Views.LinkPanelPostSearch = clc.Views.PostPanel.extend({
+
+		initialize: function( options ) {
+			_.extend( this, _.pick( options, 'parent', 'search_args' ) );
+
+			this.state = 'waiting';
+
+			if ( typeof this.search_args == 'undefined' ) {
+				this.search_args = {
+					return: {
+						title: 'title',
+						description: 'post_type_label',
+						permalink: 'permalink',
+					},
+				};
+			}
+		},
+
+		/**
+		 * Select a post and pass the model to the link panel
+		 *
+		 * @since 0.1
+		 */
+		select: function( model ) {
+			this.parent.updateLink( model );
+		}
+	});
+
+	/**
+	 * Link selection view when looking up a post
 	 *
 	 * @augments wp.Backbone.View
 	 * @since 0.1
 	 */
-	clc.Views.LinkSummary = wp.Backbone.View.extend({
-		tagName: 'li',
-
-		template: wp.template( 'clc-secondary-panel-link-summary' ),
-
-		events: {
-			'click': 'select',
-		},
-
-		initialize: function( options ) {
-			// Store reference to link panel
-			_.extend( this, _.pick( options, 'link_panel_view' ) );
-		},
-
+	clc.Views.LinkPostSummary = clc.Views.PostSummary.extend({
 		/**
 		 * Select this link
 		 *

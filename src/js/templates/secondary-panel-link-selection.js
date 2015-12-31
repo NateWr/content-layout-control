@@ -21,16 +21,8 @@
 	</div>
 </div>
 <div class="clc-link-panel-search">
-	<label>
-		<span class="customize-control-title">
-			<?php echo $this->i18n['links_search_existing_content']; ?>
-		</span>
-		<input type="text" class="clc-link-panel-search-input">
-		<span class="clc-spinner"></span>
-	</label>
-	<a href="#" class="back-to-search-form">
-		&larr;
+	<a href="#" class="back-to-search-form button-link">
 		<?php echo $this->i18n['links_back']; ?>
 	</a>
-	<ul class="clc-link-panel-list"></ul>
+	<div class="clc-link-panel-search-form"></div>
 </div>

@@ -1,0 +1,51 @@
+/**
+ * Mix-ins for control pane components
+ *
+ * @since 0.1
+ */
+
+// Single-line list item
+.clc-list-item {
+    position: relative;
+    margin-bottom: @base;
+    padding: @half (@double * 2) @half @base;
+    border: @border;
+    border-left-width: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+// Single-line list item removal icon
+.clc-list-item-remove {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: @double + @base;
+    height: @double + @base;
+    border-left: @border;
+    line-height: @double;
+    text-align: center;
+    color: red;
+    overflow: hidden;
+
+    &:before {
+        content: '\f335';
+        display: block;
+        width: @double + @base;
+        height: @double + @base;
+        font: normal 20px/1 'dashicons';
+        line-height: @double + @base;
+        speak: none;
+        position: relative;
+        vertical-align: middle;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+
+    &:hover,
+    &:focus {
+        background: red;
+        color: #fff;
+    }
+}
