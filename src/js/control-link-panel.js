@@ -63,7 +63,7 @@
 			}
 
 			this.$el.removeClass( 'search-visible' );
-			this.$el.add_link.focus();
+			this.add_link.focus();
 		},
 
 		/**
