@@ -80,8 +80,6 @@ if ( !class_exists( 'CLC_Component' ) ) {
 		/**
 		 * Get attribute hash for passing to Backbone Model
 		 *
-		 * All attributes here will be saved with the control data.
-		 *
 		 * @return array
 		 * @since 0.1
 		 */
