@@ -186,10 +186,10 @@ if ( !class_exists( 'CLC_WP_Customize_Content_Layout_Control' ) ) {
 		public function enqueue_preview_data() {
 
 			$data = array(
-				'post_id' => call_user_func( $this->active_callback, $this ) ? get_the_ID() : 0
+				'post_id' => $this->active_callback() ? get_the_ID() : 0
 			);
 
-			if ( is_page() ) {
+			if ( $this->active_callback() ) {
 				$data['components'] = get_post_meta( get_the_ID(), 'content_layout', true );
 			}
 
@@ -271,7 +271,7 @@ if ( !class_exists( 'CLC_WP_Customize_Content_Layout_Control' ) ) {
 		 */
 		public function create_layout_container( $val ) {
 
-			if ( !is_main_query() || !in_the_loop() ) {
+			if ( !is_main_query() || !in_the_loop() || !$this->active_callback() ) {
 				return $val;
 			}
 
