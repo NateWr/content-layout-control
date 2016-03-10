@@ -86,7 +86,8 @@ if ( !class_exists( 'CLC_WP_Customize_Content_Layout_Control' ) ) {
 		public function to_json() {
 			parent::to_json();
 
-			$this->json['components'] = $this->components;
+			$clc = CLC_Content_Layout_Control();
+			$this->json['components'] = array_intersect( $this->components, array_keys( $clc->components ) );
 			$this->json['i18n'] = $this->i18n;
 		}
 
