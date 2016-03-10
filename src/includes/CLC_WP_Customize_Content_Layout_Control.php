@@ -117,12 +117,15 @@ if ( !class_exists( 'CLC_WP_Customize_Content_Layout_Control' ) ) {
 			wp_enqueue_script( 'content-layout-control-js', CLC_Content_Layout_Control::$url  . '/js/content-layout-control.js', array( 'customize-controls' ), '0.1', true );
 
 			// Pass settings to the script
+			global $wp_customize;
 			wp_localize_script(
 				'content-layout-control-js',
 				'CLC_Control_Settings',
 				array(
 					'root' 	=> home_url( rest_get_url_prefix() ),
 					'nonce'	=> wp_create_nonce( 'wp_rest' ),
+					'previewed_theme' => $wp_customize->get_stylesheet(),
+					'preview_nonce' => wp_create_nonce( 'preview-customize_' . $wp_customize->get_stylesheet() ),
 				)
 			);
 
@@ -156,12 +159,15 @@ if ( !class_exists( 'CLC_WP_Customize_Content_Layout_Control' ) ) {
 			wp_enqueue_script( 'content-layout-preview-js', CLC_Content_Layout_Control::$url  . '/js/content-layout-preview.js', array( 'wp-backbone', 'customize-preview' ), '0.1', true );
 
 			// Pass settings to the script
+			global $wp_customize;
 			wp_localize_script(
 				'content-layout-preview-js',
 				'CLC_Preview_Settings',
 				array(
 					'root' 	=> home_url( rest_get_url_prefix() ),
 					'nonce'	=> wp_create_nonce( 'wp_rest' ),
+					'previewed_theme' => $wp_customize->get_stylesheet(),
+					'preview_nonce' => wp_create_nonce( 'preview-customize_' . $wp_customize->get_stylesheet() ),
 					'i18n'  => array(
 						'edit_component' => $this->i18n['edit_component'],
 					),

@@ -241,6 +241,27 @@
 	 */
 	$( function() {
 
+		// Fixes #3: REST endpoints don't exist when switching themes in the
+		// customizer
+		//
+		// This adds data to the request which tells WordPress to load the theme
+		// that's currently being previewed, so that REST endpoints defined in the
+		// the theme are available.
+		$.ajaxPrefilter( function( options, originalOptions ) {
+
+			// Only tamper with content-layout-control requests
+			if ( typeof originalOptions.url == 'undefined' ||  originalOptions.url.indexOf( CLC_Preview_Settings.root + '/content-layout-control' ) < 0 ) {
+				return;
+			}
+
+			options.data = options.data ? options.data + '&' : '';
+			options.data += $.param( {
+				wp_customize: 'on',
+				theme: CLC_Preview_Settings.previewed_theme,
+				nonce: CLC_Preview_Settings.preview_nonce
+			} );
+		} );
+
 		// Send updated post data to the controller
 		wp.customize.preview.bind( 'active', function() {
 			clc.preview.init( clc_customize_preview_data );

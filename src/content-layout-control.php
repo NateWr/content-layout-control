@@ -95,6 +95,7 @@ if ( !class_exists( 'CLC_Content_Layout_Control' ) ) {
 		public function init() {
 			add_action( 'customize_register', array( $this, '_load_customizer'), 9 );
 			add_action( 'rest_api_init', array( $this, 'register_endpoints' ) );
+			add_action( 'rest_api_init', array( $this, 'remove_customize_signature' ) );
 		}
 
 		/**
@@ -434,6 +435,21 @@ if ( !class_exists( 'CLC_Content_Layout_Control' ) ) {
 			}
 		}
 
+		/**
+		 * Remove the Customizer preview signature during REST API requests
+		 * since it corrupts the JSON.
+		 *
+		 * Lifted with gratitude from: https://github.com/xwp/wp-customize-rest-resources
+		 *
+		 * @since 0.1
+		 */
+		public function remove_customize_signature() {
+			global $wp_customize;
+			if ( ! is_customize_preview() || empty( $wp_customize ) || ! defined( 'REST_REQUEST' ) ) {
+				return;
+			}
+			$wp_customize->remove_preview_signature();
+		}
 
 	}
 }

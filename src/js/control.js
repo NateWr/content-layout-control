@@ -729,4 +729,27 @@
 	// Register the media control with the content_layout control type
 	wp.customize.controlConstructor.content_layout = clc.Control;
 
+	// Fixes #3: REST endpoints don't exist when switching themes in the
+	// customizer
+	//
+	// This adds data to the request which tells WordPress to load the theme
+	// that's currently being previewed, so that REST endpoints defined in the
+	// the theme are available.
+	$( function() {
+		$.ajaxPrefilter( function( options, originalOptions ) {
+
+			// Only tamper with content-layout-control requests
+			if ( typeof originalOptions.url == 'undefined' || originalOptions.url.indexOf( CLC_Control_Settings.root + '/content-layout-control' ) < 0 ) {
+				return;
+			}
+
+			options.data = options.data ? options.data + '&' : '';
+			options.data += $.param( {
+				wp_customize: 'on',
+				theme: CLC_Control_Settings.previewed_theme,
+				nonce: CLC_Control_Settings.preview_nonce
+			} );
+		} );
+	} );
+
 } )( jQuery );
