@@ -729,13 +729,14 @@
 	// Register the media control with the content_layout control type
 	wp.customize.controlConstructor.content_layout = clc.Control;
 
-	// Fixes #3: REST endpoints don't exist when switching themes in the
-	// customizer
-	//
-	// This adds data to the request which tells WordPress to load the theme
-	// that's currently being previewed, so that REST endpoints defined in the
-	// the theme are available.
 	$( function() {
+
+		// Fixes #3: REST endpoints don't exist when switching themes in the
+		// customizer
+		//
+		// This adds data to the request which tells WordPress to load the theme
+		// that's currently being previewed, so that REST endpoints defined in the
+		// the theme are available.
 		$.ajaxPrefilter( function( options, originalOptions ) {
 
 			// Only tamper with content-layout-control requests
@@ -750,6 +751,11 @@
 				nonce: CLC_Control_Settings.preview_nonce
 			} );
 		} );
+
+		// Open and focus on the content-layout-control if requested on load
+		if ( typeof CLC_Control_Settings.onload_focus_control !== 'undefined' ) {
+			wp.customize.control('content_layout_control').focus();
+		}
 	} );
 
 } )( jQuery );
