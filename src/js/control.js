@@ -753,7 +753,7 @@
 		} );
 
 		// Open and focus on the content-layout-control if requested on load
-		if ( typeof CLC_Control_Settings.onload_focus_control !== 'undefined' ) {
+		if ( CLC_Control_Settings.onload_focus_control == '1' ) {
 			wp.customize.control('content_layout_control').focus();
 		}
 	} );

@@ -127,7 +127,7 @@ if ( !class_exists( 'CLC_WP_Customize_Content_Layout_Control' ) ) {
 					'nonce'	=> wp_create_nonce( 'wp_rest' ),
 					'previewed_theme' => $wp_customize->get_stylesheet(),
 					'preview_nonce' => wp_create_nonce( 'preview-customize_' . $wp_customize->get_stylesheet() ),
-					'onload_focus_control' => isset( $_GET['clc_onload_focus_control'] ),
+					'onload_focus_control' => !empty( $_GET['clc_onload_focus_control'] ),
 				)
 			);
 
