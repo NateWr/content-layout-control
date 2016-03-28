@@ -226,7 +226,7 @@ if ( !class_exists( 'CLC_WP_Customize_Content_Layout_Control' ) ) {
 			// Print each component's control template
 			foreach( $clc->components as $id => $component ) {
 				?>
-				<script type="text/html" id="tmpl-clc-component-<?php esc_attr_e( $id ); ?>"><?php $component->control_template(); ?></script>
+				<script type="text/html" id="tmpl-clc-component-<?php echo esc_attr( $id ); ?>"><?php $component->control_template(); ?></script>
 				<?php
 			}
 		}

@@ -11,7 +11,7 @@
  */
 ?>
 
-<div class="clc-wrapper<?php if ( $this->image ) : ?> image-position-<?php esc_attr_e( $this->image_position ); endif; ?>">
+<div class="clc-wrapper<?php if ( $this->image ) : ?> image-position-<?php echo esc_attr( $this->image_position ); endif; ?>">
 	<?php if ( $this->image ) : ?>
 		<div class="image">
 			<?php echo wp_get_attachment_image( $this->image ); ?>
@@ -28,7 +28,7 @@
 			<ul class="links">
 				<?php foreach( $this->links as $link ) : ?>
 					<li>
-						<a href="<?php echo esc_url( $link['url'] ); ?>"><?php esc_html_e( $link['link_text'] ); ?></a>
+						<a href="<?php echo esc_url( $link['url'] ); ?>"><?php echo esc_html( $link['link_text'] ); ?></a>
 					</li>
 				<?php endforeach; ?>
 			</ul>
