@@ -184,7 +184,7 @@ if ( !class_exists( 'CLC_Content_Layout_Control' ) ) {
 
 			$components = array();
 			foreach( $this->components as $id => $component ) {
-				$components[$id] = $component->get_attributes();
+				$components[$id] = $component->get_meta_attributes();
 			}
 
 			return $components;

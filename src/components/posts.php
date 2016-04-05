@@ -46,13 +46,13 @@ if ( !class_exists( 'CLC_Component_Posts' ) ) {
 		public $settings = array( 'items' );
 
 		/**
-		 * Get attribute hash
+		 * Get meta attributes
 		 *
 		 * @since 0.1
 		 */
-		public function get_attributes() {
+		public function get_meta_attributes() {
 
-			$atts = parent::get_attributes();
+			$atts = parent::get_meta_attributes();
 			$atts['limit_posts'] = $this->limit_posts;
 			$atts['post_types'] = $this->post_types;
 

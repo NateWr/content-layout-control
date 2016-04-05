@@ -9,15 +9,17 @@
 	 * @since 0.1
 	 */
 	clc.Models.components.posts = clc.Models.Component.extend({
-		defaults: {
-			name:           '',
-			description:    '',
-			type:           'posts',
-			title:          '',
-			items:          [],
-			limit_posts:    0,
-			post_types:     'any',
-			order:          0
+		defaults: function() {
+			return {
+				name:           '',
+				description:    '',
+				type:           'posts',
+				title:          '',
+				items:          [],
+				limit_posts:    0,
+				post_types:     'any',
+				order:          0
+			};
 		}
 	});
 

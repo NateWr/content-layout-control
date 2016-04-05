@@ -613,8 +613,10 @@
 				return;
 			}
 
-			var atts = _.clone( clc_components[type] );
-			atts.order = this.added_components.length;
+			if ( !this.isAllowed( type ) ) {
+				console.log( 'Tried to add unallowed component type: ' + type );
+				return;
+			}
 
 			// Generate a unique ID for the model in this collection. Since it's
 			// just an arbitrary id, it will sometimes match an existing
@@ -624,9 +626,11 @@
 				return collection.get( id ) ? get_unique_id( _.uniqueId(), collection ) : id;
 			};
 
+			var atts = _.clone( clc_components[type] );
 			atts.id = get_unique_id( _.uniqueId(), this.added_components );
+			atts.order = this.added_components.length;
 
-			this.added_components.add( new clc.Models.components[type]( atts ).toJSON() );
+			this.added_components.add( new clc.Models.components[type]( atts ) );
 		},
 
 		/**
@@ -685,10 +689,8 @@
 				// old data if allowed components change.
 				// @TODO situations like this should alert the user and try to
 				//  handle old data gracefully.
-				if ( this.allowed_components.findWhere({ type: components[i].type }) ) {
-					var atts = _.clone( clc_components[components[i].type] );
-					atts = _.extend( atts, components[i] );
-					models.push( new clc.Models.components[components[i].type]( atts ) );
+				if ( this.isAllowed( components[i].type ) ) {
+					models.push( new clc.Models.components[components[i].type]( components[i] ) );
 				}
 			}
 
@@ -723,6 +725,15 @@
 			this.added_components.each( function( model ) {
 				model.trigger( event, data );
 			});
+		},
+
+		/**
+		 * Check if a component type is allowed
+		 *
+		 * @since 0.1
+		 */
+		isAllowed: function( type ) {
+			return this.allowed_components.findWhere({ type: type });
 		}
 	});
 

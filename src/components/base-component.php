@@ -78,26 +78,31 @@ if ( !class_exists( 'CLC_Component' ) ) {
 		abstract function sanitize( $val );
 
 		/**
-		 * Get attribute hash for passing to Backbone Model
+		 * Get meta attributes
+		 *
+		 * Meta attributes are passed to the Backbone model and are not intended
+		 * to be modified in each instance of the component. Defaults that
+		 * that will be modified in each instance should be defined in the
+		 * Backbone model.
+		 *
+		 * These attributes are passed to the Backbone model with a shallow
+		 * copy. Arrays or objects will be passed by reference, which may lead
+		 * to unexpected results if these attributes are modified in each
+		 * instance of the component.
+		 *
+		 * If you want to pass a meta attribute that will also be modified in
+		 * each instance, it must be a JS primitive (null, boolean, string or
+		 * and number) that can be cloned with _.clone().
 		 *
 		 * @return array
 		 * @since 0.1
 		 */
-		public function get_attributes() {
-
-			$atts = array(
+		public function get_meta_attributes() {
+			return array(
 				'type'        => $this->type,
 				'name'        => $this->name,
 				'description' => $this->description,
 			);
-
-			foreach( $this->settings as $setting ) {
-				if (  isset( $this->{$setting} ) ) {
-					$atts[$setting] = $this->{$setting};
-				}
-			}
-
-			return $atts;
 		}
 
 		/**
