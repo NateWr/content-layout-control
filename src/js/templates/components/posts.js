@@ -33,7 +33,7 @@
 			</div>
 		<# } #>
 		<div class="buttons">
-			<button class="add-post button-secondary" <# if ( data.model.get( 'limit_posts' ) === 0 || data.model.get( 'limit_posts' ) <= data.model.get( 'items' ).length ) { #>disabled="disabled"<# } #>>
+			<button class="add-post button-secondary" <# if ( data.model.get( 'limit_posts' ) !== 0 && data.model.get( 'limit_posts' ) <= data.model.get( 'items' ).length ) { #>disabled="disabled"<# } #>>
 				<?php echo $this->i18n['posts_add_button']; ?>
 			</button>
 		</div>

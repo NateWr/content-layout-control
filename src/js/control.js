@@ -690,7 +690,8 @@
 				// @TODO situations like this should alert the user and try to
 				//  handle old data gracefully.
 				if ( this.isAllowed( components[i].type ) ) {
-					models.push( new clc.Models.components[components[i].type]( components[i] ) );
+					var atts = _.clone( clc_components[components[i].type]);
+					models.push( new clc.Models.components[components[i].type]( _.extend( {}, atts, components[i] ) ) );
 				}
 			}
 
