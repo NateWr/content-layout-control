@@ -155,7 +155,7 @@ if ( !class_exists( 'CLC_WP_Customize_Content_Layout_Control' ) ) {
 		public function enqueue_preview_assets() {
 
 			// Load core preview styles
-			wp_enqueue_style( 'content-layout-preview', CLC_Content_Layout_Control::$url . '/css/content-layout-preview.css', '0.1' );
+			wp_enqueue_style( 'content-layout-preview', CLC_Content_Layout_Control::$url . '/css/content-layout-preview.css', array( 'dashicons' ), '0.1' );
 
 			// Load required control, model and view classes
 			wp_enqueue_script( 'content-layout-preview-js', CLC_Content_Layout_Control::$url  . '/js/content-layout-preview.js', array( 'wp-backbone', 'customize-preview' ), '0.1', true );
