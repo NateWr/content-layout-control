@@ -1,0 +1,16 @@
+{
+  "name"       : "NateWr/content-layout-control",
+  "description": "A lightweight framework for WordPress developers who want to add bespoke, limited and carefully ring-fenced content layout features to their themes.",
+  "keywords"   : ["wordpress"],
+  "homepage"   : "https://github.com/NateWr/content-layout-control/",
+  "license"    : "GPL-2.0+",
+  "authors"    : [
+    {
+      "name"    : "Nate Wright",
+      "homepage": "http://themeofthecrop.com"
+    }
+  ],
+  "support"    : {
+    "issues": "https://github.com/NateWr/content-layout-control/issues"
+  }
+}
