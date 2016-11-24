@@ -120,12 +120,73 @@ if ( !class_exists( 'CLC_Component' ) ) {
 		public function enqueue_preview_assets() {}
 
 		/**
+		 * Retrieve the template file for this component output
+		 *
+		 * @since 0.1
+		 */
+		public function get_render_template() {
+
+			$dirs = wp_unslash(
+				apply_filters(
+					'clc_component_render_template_dirs',
+					array(
+						CLC_Content_Layout_Control::$dir . '/components/templates',
+					),
+					$this
+				)
+			);
+
+			$file = apply_filters( 'clc_component_render_template_filename', $this->type . '.php', $this );
+
+			foreach( $dirs as $dir ) {
+				if ( file_exists( $dir . '/' . $file ) ) {
+					return $dir . '/' . $file;
+				}
+			}
+
+			return '';
+		}
+
+		/**
+		 * Retrieve the template file for this component's customizer control
+		 *
+		 * @since 0.1
+		 */
+		public function get_control_template() {
+
+			$dirs = wp_unslash(
+				apply_filters(
+					'clc_component_control_template_dirs',
+					array(
+						CLC_Content_Layout_Control::$dir . '/js/templates/components',
+					),
+					$this
+				)
+			);
+
+			$file = apply_filters( 'clc_component_control_template_filename', $this->type . '.js', $this );
+
+			foreach( $dirs as $dir ) {
+				if ( file_exists( $dir . '/' . $file ) ) {
+					return $dir . '/' . $file;
+				}
+			}
+
+			return '';
+		}
+
+		/**
 		 * Render the layout with the content ready to be appended or saved to
 		 * `post_content`
 		 *
 		 * @since 0.1
 		 */
-		public function render_layout() {}
+		public function render_layout() {
+			$file = $this->get_render_template();
+			if ( $file ) {
+				include( $file );
+			}
+		}
 
 		/**
 		 * Print the control template. It should be an Underscore.js template
@@ -133,7 +194,12 @@ if ( !class_exists( 'CLC_Component' ) ) {
 		 *
 		 * @since 0.1
 		 */
-		public function control_template() {}
+		public function control_template() {
+			$file = $this->get_control_template();
+			if ( $file ) {
+				include( $file );
+			}
+		}
 
 		/**
 		 * Register any custom endpoints required by this component

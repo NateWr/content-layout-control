@@ -101,26 +101,5 @@ if ( !class_exists( 'CLC_Component_Posts' ) ) {
 		public function sanitize_item( $item ) {
 			return array( 'ID' => isset( $item['ID'] ) ? absint( $item['ID'] ) : 0 );
 		}
-
-
-		/**
-		 * Render the layout template and return an HTML blob with the content,
-		 * ready to be appended or saved to `post_content`
-		 *
-		 * @since 0.1
-		 */
-		public function render_layout() {
-			include( CLC_Content_Layout_Control::$dir . '/components/templates/posts.php' );
-		}
-
-		/**
-		 * Print the control template. It should be an Underscore.js template
-		 * using the same template conventions as core WordPress controls
-		 *
-		 * @since 0.1
-		 */
-		public function control_template() {
-			include( CLC_Content_Layout_Control::$dir . '/js/templates/components/posts.js' );
-		}
 	}
 }
