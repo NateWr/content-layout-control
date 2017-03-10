@@ -76,6 +76,7 @@
 
 			this.$el.removeClass( 'clc-loading' );
 			this.injectHTML( html );
+			this.$el.trigger( 'component-preview-updated.clc', [this.$el, this.model] );
 		},
 
 		/**
